@@ -473,11 +473,13 @@ nav.scrolled{border-bottom-color:var(--line);background:rgba(7,7,7,.82)}
   box-shadow:0 34px 80px rgba(0,0,0,.65), 0 0 0 1px var(--accent-soft);
 }
 /* a moldura recorta tudo: capa, scroll longo e brilho */
+/* a capa é um botão: abre a prévia embutida, sem tirar ninguém do portfólio */
 .proj-media{
-  display:block;position:relative;overflow:hidden;
+  display:block;position:relative;overflow:hidden;width:100%;
   aspect-ratio:16/10;background:#0c0c0c;
-  border-bottom:1px solid var(--line);
-  text-decoration:none;color:inherit;
+  border:0;border-bottom:1px solid var(--line);
+  padding:0;margin:0;font:inherit;color:inherit;text-align:left;
+  cursor:pointer;-webkit-appearance:none;appearance:none;
 }
 /* A placa é 8% mais alta que a moldura e ancorada no topo, então qualquer
    deslocamento entre -8% e 0% continua cobrindo a área visível.
@@ -591,6 +593,64 @@ footer a:hover{color:#fff}
 @media(max-width:900px){
   #lab{padding:84px 14px}
   .lab-stage{height:400px;border-radius:18px}
+}
+
+/* ---------- visualizador embutido dos projetos ----------
+   O site abre aqui dentro, num iframe, em vez de levar a pessoa embora.
+   O knifes.me responde frame-ancestors 'none', então para ele entra a
+   captura da página inteira, rolável. */
+.viewer{
+  position:fixed;inset:0;z-index:1100;
+  display:flex;flex-direction:column;gap:12px;
+  padding:14px 16px 18px;
+  background:rgba(4,4,4,.9);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  opacity:0;transition:opacity .26s ease;
+}
+.viewer.on{opacity:1}
+.viewer[hidden]{display:none}
+.viewer-bar{
+  display:flex;align-items:center;gap:14px;
+  width:min(1180px,100%);margin:0 auto;flex:0 0 auto;
+}
+.viewer-title{
+  font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.12em;
+  text-transform:uppercase;color:#e8e8e8;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.viewer-note{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;
+  color:var(--mut);border:1px solid var(--glass-b);border-radius:99px;
+  padding:5px 11px;white-space:nowrap;
+}
+.viewer-note[hidden]{display:none}
+.viewer-close{
+  margin-left:auto;flex:0 0 auto;
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;cursor:pointer;
+  color:#000;background:#fff;border:0;border-radius:99px;padding:10px 18px;
+  transition:transform .2s, box-shadow .2s;
+}
+.viewer-close:hover{transform:translateY(-2px);box-shadow:0 10px 30px var(--accent-glow)}
+.viewer-stage{
+  flex:1 1 auto;min-height:0;position:relative;
+  width:min(1180px,100%);margin:0 auto;
+  background:#0d0d0d;border:1px solid var(--glass-b);
+  border-radius:14px;overflow:hidden;
+  box-shadow:0 40px 110px rgba(0,0,0,.75);
+}
+.viewer-frame{width:100%;height:100%;border:0;display:block;background:#fff}
+.viewer-frame[hidden]{display:none}
+.viewer-shot{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;background:#fff}
+.viewer-shot[hidden]{display:none}
+.viewer-shot img{display:block;width:100%;height:auto}
+body.viewer-aberto{overflow:hidden}
+@media(max-width:900px){
+  .viewer{padding:10px 10px 12px;gap:10px}
+  .viewer-stage{border-radius:12px}
+  .viewer-title{font-size:11px}
+  .viewer-note{display:none}      /* barra estreita: o aviso vira ruído */
+  .viewer-close{padding:9px 14px}
 }
 
 /* scroll reveal */
@@ -819,14 +879,14 @@ footer a:hover{color:#fff}
 
   <div class="pane proj-grid show" id="p-proj" role="tabpanel" aria-labelledby="tab-proj" tabindex="0">
 
-    <article class="proj rv">
-      <div class="proj-media" aria-hidden="true">
+    <article class="proj rv" data-url="https://drathaysemarques.adv.br/" data-modo="iframe">
+      <button class="proj-media" type="button">
         <div class="proj-plate">
           <img class="proj-cover" src="assets/projetos/thayse-cover.webp" width="3150" height="1969" alt="" loading="lazy" decoding="async">
           <img class="proj-scroll" data-src="assets/projetos/thayse-long.webp" width="1400" height="4400" alt="" decoding="async">
         </div>
         <span class="proj-glare"></span>
-      </div>
+      </button>
       <div class="proj-body">
         <div class="proj-top"><span class="num">/01</span></div>
         <h3 data-i="p1_h">Dra. Thayse Marques Lima</h3>
@@ -835,14 +895,14 @@ footer a:hover{color:#fff}
       </div>
     </article>
 
-    <article class="proj rv">
-      <div class="proj-media" aria-hidden="true">
+    <article class="proj rv" data-url="https://sandrahairsalon.ch/" data-modo="iframe">
+      <button class="proj-media" type="button">
         <div class="proj-plate">
           <img class="proj-cover" src="assets/projetos/sandra-cover.webp" width="3150" height="1969" alt="" loading="lazy" decoding="async">
           <img class="proj-scroll" data-src="assets/projetos/sandra-long.webp" width="1400" height="4400" alt="" decoding="async">
         </div>
         <span class="proj-glare"></span>
-      </div>
+      </button>
       <div class="proj-body">
         <div class="proj-top"><span class="num">/02</span></div>
         <h3 data-i="p2_h">Sandra Hair Salon</h3>
@@ -851,14 +911,14 @@ footer a:hover{color:#fff}
       </div>
     </article>
 
-    <article class="proj rv">
-      <div class="proj-media" aria-hidden="true">
+    <article class="proj rv" data-url="https://knifes.me/" data-modo="shot">
+      <button class="proj-media" type="button">
         <div class="proj-plate">
           <img class="proj-cover" src="assets/projetos/knifes-cover.webp" width="3150" height="1969" alt="" loading="lazy" decoding="async">
           <img class="proj-scroll" data-src="assets/projetos/knifes-long.webp" width="1400" height="4400" alt="" decoding="async">
         </div>
         <span class="proj-glare"></span>
-      </div>
+      </button>
       <div class="proj-body">
         <div class="proj-top"><span class="num">/03</span><span class="proj-flag" data-i="p3_flag">Eigenes Produkt</span></div>
         <h3 data-i="p3_h">knifes.me</h3>
@@ -867,14 +927,14 @@ footer a:hover{color:#fff}
       </div>
     </article>
 
-    <article class="proj rv">
-      <div class="proj-media" aria-hidden="true">
+    <article class="proj rv" data-url="https://kyso1.github.io/fg-systems/" data-modo="iframe">
+      <button class="proj-media" type="button">
         <div class="proj-plate">
           <img class="proj-cover" src="assets/projetos/fg-cover.webp" width="3150" height="1969" alt="" loading="lazy" decoding="async">
           <img class="proj-scroll" data-src="assets/projetos/fg-long.webp" width="1400" height="4400" alt="" decoding="async">
         </div>
         <span class="proj-glare"></span>
-      </div>
+      </button>
       <div class="proj-body">
         <div class="proj-top"><span class="num">/04</span></div>
         <h3 data-i="p4_h">Truffle N.B. Tricolore</h3>
@@ -934,6 +994,21 @@ footer a:hover{color:#fff}
   </footer>
 </section>
 
+<!-- ============ visualizador embutido dos projetos ============ -->
+<div class="viewer" id="viewer" hidden role="dialog" aria-modal="true" aria-labelledby="viewerTitle">
+  <div class="viewer-bar">
+    <span class="viewer-title" id="viewerTitle"></span>
+    <span class="viewer-note" id="viewerNote" hidden></span>
+    <button class="viewer-close" type="button" id="viewerClose"></button>
+  </div>
+  <div class="viewer-stage" id="viewerStage">
+    <iframe class="viewer-frame" id="viewerFrame" title=""
+            sandbox="allow-scripts allow-same-origin allow-forms"
+            referrerpolicy="no-referrer" hidden></iframe>
+    <div class="viewer-shot" id="viewerShot" hidden><img alt="" id="viewerShotImg"></div>
+  </div>
+</div>
+
 <script>
 /* =========================================================================
    Contato: preencha com o número no formato internacional, só dígitos.
@@ -966,7 +1041,8 @@ const I18N = {
     lab_h:"3D Playground", lab_p:"eine Uhr in WebGL, live gerendert. Die Zeiger laufen in Echtzeit.", lab_hint:"zum Drehen ziehen",
     end_h:'Lass uns etwas<br><em>gemeinsam bauen</em>',
     end_sub:"full-stack developer und ux·ui designer",
-    btn_mail:"E-Mail senden", btn_copy:"E-Mail kopieren", btn_copied:"kopiert ✓"
+    btn_mail:"E-Mail senden", btn_copy:"E-Mail kopieren", btn_copied:"kopiert ✓",
+    card_open:"Vorschau öffnen", viewer_close:"schliessen", viewer_shot:"Ganzseiten-Aufnahme"
   },
   en: {
     skip:"Skip to content",
@@ -987,7 +1063,8 @@ const I18N = {
     lab_h:"3D Playground", lab_p:"a WebGL watch, rendered live. The hands run in real time.", lab_hint:"drag to rotate",
     end_h:"Let's build<br><em>something together</em>",
     end_sub:"full-stack developer and ux·ui designer",
-    btn_mail:"Send e-mail", btn_copy:"Copy e-mail", btn_copied:"copied ✓"
+    btn_mail:"Send e-mail", btn_copy:"Copy e-mail", btn_copied:"copied ✓",
+    card_open:"Open preview", viewer_close:"close", viewer_shot:"full-page capture"
   },
   pt: {
     skip:"Pular para o conteúdo",
@@ -1008,13 +1085,16 @@ const I18N = {
     lab_h:"3D Playground", lab_p:"um relógio em WebGL, renderizado ao vivo. Os ponteiros andam em tempo real.", lab_hint:"arraste para girar",
     end_h:"Vamos construir<br><em>algo juntos</em>",
     end_sub:"full-stack developer e ux·ui designer",
-    btn_mail:"Enviar e-mail", btn_copy:"Copiar e-mail", btn_copied:"copiado ✓"
+    btn_mail:"Enviar e-mail", btn_copy:"Copiar e-mail", btn_copied:"copiado ✓",
+    card_open:"Abrir prévia", viewer_close:"fechar", viewer_shot:"captura da página inteira"
   }
 };
 const langButtons = [...document.querySelectorAll('.lang-switch button')];
 let lang = 'de';
-// preenchido quando o letreiro do eyebrow é montado, mais abaixo
-let remontaLetreiro = null;
+// Preenchidos mais abaixo, quando o letreiro e o visualizador são montados.
+// Precisam ser declarados ACIMA de setLang: initLang chama setLang logo em
+// seguida, e um let declarado depois estaria em zona morta temporal.
+let remontaLetreiro = null, traduzVisualizador = null;
 
 function setLang(l, persist = true){
   lang = I18N[l] ? l : 'de';
@@ -1027,6 +1107,7 @@ function setLang(l, persist = true){
   langButtons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
   // o texto mudou de largura: o letreiro precisa ser medido e repetido de novo
   if (remontaLetreiro) remontaLetreiro();
+  if (traduzVisualizador) traduzVisualizador();
   if (persist) { try { localStorage.setItem('sux-lang', lang); } catch {} }
 }
 langButtons.forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
@@ -1166,6 +1247,90 @@ atualizaLetreiro = letreiro.update;
 
 onScroll();   // pinta campo e letreiro já na posição atual, sem esperar o scroll
 
+/* ============ visualizador embutido ============
+   Clicar na capa abre o site dentro do portfólio. O sandbox não inclui
+   allow-top-navigation nem allow-popups, então nada dentro do iframe
+   consegue arrastar a pessoa para fora da página. */
+const visualizador = (function(){
+  const caixa  = document.getElementById('viewer');
+  const titulo = document.getElementById('viewerTitle');
+  const aviso  = document.getElementById('viewerNote');
+  const fechar = document.getElementById('viewerClose');
+  const quadro = document.getElementById('viewerFrame');
+  const chapa  = document.getElementById('viewerShot');
+  const chapaImg = document.getElementById('viewerShotImg');
+  if (!caixa) return { abrir(){}, traduzir(){} };
+
+  let aberto = false, devolveFoco = null;
+
+  function abrir(card){
+    const url  = card.dataset.url;
+    const modo = card.dataset.modo;
+    const nome = (card.querySelector('h3') || {}).textContent || '';
+    if (!url) return;
+
+    devolveFoco = card.querySelector('.proj-media');
+    titulo.textContent = nome;
+
+    if (modo === 'iframe'){
+      chapa.hidden = true; chapaImg.removeAttribute('src');
+      aviso.hidden = true;
+      quadro.hidden = false;
+      quadro.title = nome;
+      quadro.src = url;
+    } else {
+      // o site recusa ser embutido: mostra a captura da página inteira
+      quadro.hidden = true; quadro.removeAttribute('src');
+      const fonte = card.querySelector('.proj-scroll');
+      chapaImg.src = fonte ? (fonte.getAttribute('src') || fonte.dataset.src) : '';
+      chapaImg.alt = nome;
+      chapa.hidden = false; chapa.scrollTop = 0;
+      aviso.textContent = I18N[lang].viewer_shot;
+      aviso.hidden = false;
+    }
+
+    caixa.hidden = false;
+    document.body.classList.add('viewer-aberto');
+    requestAnimationFrame(() => caixa.classList.add('on'));
+    aberto = true;
+    fechar.focus();
+  }
+
+  function fecharTudo(){
+    if (!aberto) return;
+    aberto = false;
+    caixa.classList.remove('on');
+    const limpa = () => {
+      caixa.hidden = true;
+      quadro.removeAttribute('src');       // para de carregar e de tocar som
+      chapaImg.removeAttribute('src');
+      document.body.classList.remove('viewer-aberto');
+      if (devolveFoco) devolveFoco.focus();
+    };
+    caixa.addEventListener('transitionend', limpa, { once: true });
+    setTimeout(limpa, 400);                // rede de segurança
+  }
+
+  fechar.addEventListener('click', fecharTudo);
+  caixa.addEventListener('mousedown', e => { if (e.target === caixa) fecharTudo(); });
+  addEventListener('keydown', e => { if (e.key === 'Escape' && aberto) fecharTudo(); });
+
+  return {
+    abrir,
+    traduzir(){
+      fechar.textContent = I18N[lang].viewer_close;
+      if (!aviso.hidden) aviso.textContent = I18N[lang].viewer_shot;
+      document.querySelectorAll('.proj').forEach(c => {
+        const b = c.querySelector('.proj-media');
+        const h = c.querySelector('h3');
+        if (b && h) b.setAttribute('aria-label', I18N[lang].card_open + ': ' + h.textContent);
+      });
+    },
+  };
+})();
+traduzVisualizador = visualizador.traduzir;
+visualizador.traduzir();
+
 /* ============ cards de projeto: tilt 3D, brilho e scroll da página ============ */
 document.querySelectorAll('.proj').forEach(card => {
   const media  = card.querySelector('.proj-media');
@@ -1189,6 +1354,9 @@ document.querySelectorAll('.proj').forEach(card => {
   };
   card.addEventListener('pointerenter', arm);
   card.addEventListener('focusin', arm);
+
+  // clique ou toque na capa abre a prévia embutida
+  if (media) media.addEventListener('click', () => visualizador.abrir(card));
 
   if (reduced || noHover) return;
 
