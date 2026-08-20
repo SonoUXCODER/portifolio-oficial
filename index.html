@@ -604,13 +604,142 @@ footer a:hover{color:#fff}
    distância é o que aciona a revelação.
    Não pode ganhar .panel: aquele overflow:hidden viraria um contêiner de
    rolagem e o sticky de dentro deixaria de grudar. */
-/* abertura: uma frase só, entre o hero e o portfólio */
-#intro{
+/* ---------- cena: a palavra recortada no vídeo ----------
+   Três camadas empilhadas dentro do mesmo pin:
+     0. .cena-fundo   grade + palavras fantasma (é o que aparece pelo furo)
+     1. .cena-canvas  o vídeo com a palavra vazada
+     2. .cena-dica    o "role" lá embaixo
+   O canvas é o único que anima; o resto é CSS parado. */
+#cena{
   position:relative;z-index:2;
   background:var(--bg);
   border-top:1px solid var(--line);
   box-shadow:0 -40px 120px rgba(0,0,0,.9);
+  min-height:330vh;
+}
+.cena-pin{
+  position:sticky;top:0;
+  height:100vh;height:100svh;
+  overflow:hidden;
+  background:var(--bg);
+  isolation:isolate;
+  /* 0 no começo da cena, 1 quando o vídeo já saiu. O JS só escreve este
+     número; quem reage a ele é o CSS aqui embaixo. */
+  --luz:0;
+}
+/* o fundo acende e sobe devagar: por dentro das letras dá para ver esse
+   movimento, e quando o vídeo some ele já está aceso para receber a tela */
+.cena-fundo{
+  position:absolute;inset:0;z-index:0;overflow:hidden;
+  transform:translateY(calc(var(--luz) * -2vh)) scale(calc(1 + var(--luz) * .05));
+  will-change:transform;
+}
+/* A luz que aparece por dentro das letras. Larga e baixa, porque a palavra é
+   uma faixa deitada no meio da tela. Vai apagando conforme --luz sobe: quando
+   o vídeo já saiu, o furo é a tela inteira e este brilho no talo cegaria. */
+.cena-brilho{
+  position:absolute;left:50%;top:50%;
+  width:150%;height:82%;
+  transform:translate(-50%,-50%);
+  /* O miolo claro precisa ser LARGO: a palavra ocupa 82% da tela, então as
+     letras das pontas caem longe do centro e apagariam num brilho estreito. */
+  background:radial-gradient(ellipse 58% 52% at 50% 50%,
+    #fff 0%, #f2eeff 38%, var(--accent-ink) 60%, var(--accent-glow) 78%, transparent 94%);
+  opacity:calc(1 - var(--luz) * .8);
+}
+.cena-grade{
+  position:absolute;inset:-110px;
+  opacity:calc(.5 + var(--luz) * .5);
+  background:
+    linear-gradient(90deg,transparent 0 49.94%,rgba(255,255,255,.11) 50%,transparent 50.06%),
+    linear-gradient(0deg,transparent 0 49.94%,rgba(255,255,255,.06) 50%,transparent 50.06%);
+  background-size:110px 110px;
+  -webkit-mask-image:linear-gradient(transparent,#000 24%,#000 76%,transparent);
+          mask-image:linear-gradient(transparent,#000 24%,#000 76%,transparent);
+}
+/* o brilho roxo do resto do site, para o vídeo quente não ficar solto */
+.cena-fundo::after{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 46%,var(--accent-glow),transparent 58%);
+  opacity:.5;
+}
+.cena-fantasma{
+  position:absolute;left:50%;top:50%;
+  display:flex;justify-content:space-between;
+  font-weight:900;font-variation-settings:"wdth" 70;
+  font-size:clamp(58px,12vw,178px);line-height:1;
+  letter-spacing:-.05em;text-transform:uppercase;
+  color:rgba(255,255,255,calc(.06 + var(--luz) * .09));
+  white-space:nowrap;
+}
+.cena-fantasma--cima {transform:translate(-50%,-235%);width:min(1000px,96vw)}
+.cena-fantasma--meio {transform:translate(-50%,-50%);  width:min(1120px,104vw)}
+.cena-fantasma--baixo{transform:translate(-50%,135%);  width:min(1260px,116vw)}
+.cena-canvas{
+  position:absolute;inset:0;z-index:1;
+  width:100%;height:100%;
+  will-change:opacity;
+}
+/* o vídeo é só fonte de pixels: fica na página para o browser decodificar,
+   mas do tamanho de um ponto e invisível. display:none pararia a decodificação. */
+.cena-video{
+  position:absolute;left:0;top:0;z-index:0;
+  width:1px;height:1px;opacity:0;pointer-events:none;
+}
+.cena-dica{
+  position:absolute;left:50%;bottom:34px;z-index:2;
+  transform:translateX(-50%);
+  width:1px;height:52px;
+  background:linear-gradient(rgba(255,255,255,.35),transparent);
+  will-change:opacity;
+}
+.cena-dica span{
+  position:absolute;left:-1px;top:0;width:3px;height:16px;border-radius:2px;
+  background:var(--accent-ink);
+  animation:cenaDesce 2.1s cubic-bezier(.7,0,.3,1) infinite;
+}
+@keyframes cenaDesce{
+  0%{transform:translateY(-6px);opacity:0}
+  30%{opacity:1}
+  100%{transform:translateY(46px);opacity:0}
+}
+/* sem movimento: nada de vídeo nem de furo, a palavra vira só um título */
+@media (prefers-reduced-motion:reduce){
+  #cena{min-height:0}
+  .cena-pin{position:relative;height:auto;padding:24vh 24px}
+  .cena-canvas,.cena-video,.cena-dica{display:none}
+  #cenaPalavra{
+    position:static;width:auto;height:auto;margin:0;clip:auto;overflow:visible;
+    text-align:center;color:var(--ink);
+    font-weight:900;font-variation-settings:"wdth" 68;
+    font-size:clamp(64px,16vw,220px);line-height:.92;letter-spacing:-.05em;
+  }
+}
+@media(max-width:900px){
+  #cena{min-height:280vh}
+  /* No desktop as linhas passam de propósito da largura da tela: o corte nas
+     bordas faz parte do desenho. No celular não sobra margem para isso — as
+     pontas das palavras sumiam — então aqui as linhas cabem inteiras, e a
+     fonte encolhe junto para os dois pedaços não se encontrarem no meio.
+     O tamanho é medido pela palavra mais longa dos três idiomas (SPRACHIG). */
+  .cena-fantasma{font-size:clamp(28px,11.5vw,64px);letter-spacing:-.06em}
+  .cena-fantasma--cima {width:84vw;transform:translate(-50%,-260%)}
+  .cena-fantasma--meio {width:90vw}
+  .cena-fantasma--baixo{width:96vw;transform:translate(-50%,160%)}
+}
+
+/* abertura: uma frase só, entre o hero e o portfólio */
+#intro{
+  position:relative;z-index:3;
+  background:var(--bg);
+  border-top:1px solid var(--line);
+  box-shadow:0 -40px 120px rgba(0,0,0,.9);
   min-height:185vh;
+  /* sobe por cima do fim da cena com o canto arredondado: é o mesmo truque
+     de "cartão que desliza sobre a seção anterior". Só faz sentido porque
+     lá atrás sobrou a grade acesa para o canto recortar contra. */
+  border-radius:26px 26px 0 0;
+  margin-top:-16vh;
 }
 .intro-pin{
   position:sticky;top:0;
@@ -625,7 +754,7 @@ footer a:hover{color:#fff}
   line-height:1.16;letter-spacing:-.02em;
 }
 @media (prefers-reduced-motion:reduce){
-  #intro{min-height:0}
+  #intro{min-height:0;margin-top:0;border-radius:0}
   .intro-pin{position:relative;min-height:0}
 }
 @media(max-width:900px){
@@ -1023,6 +1152,41 @@ body.viewer-aberto{overflow:hidden}
   </div>
 </section>
 
+<!-- ============ CENA: a palavra recortada no vídeo ============
+     Uma seção alta com o miolo presinho no topo; a altura que sobra é o
+     curso da animação. O canvas cobre a tela com o vídeo e depois desenha
+     a palavra em destination-out: dentro das letras não fica tinta nenhuma,
+     então o furo mostra o que está ATRÁS no HTML (a grade e as palavras
+     fantasma). Rolando, o furo cresce até engolir a tela — a gente atravessa
+     a letra e cai na frase da abertura.
+     Sem .panel de propósito: o overflow:hidden dele viraria contêiner de
+     rolagem e o sticky de dentro deixaria de grudar. -->
+<section id="cena">
+  <div class="cena-pin">
+    <div class="cena-fundo" aria-hidden="true">
+      <!-- a palavra é um buraco no vídeo, então quem acende as letras por
+           dentro é esta camada. Sem ela o furo mostraria só o preto do site
+           e a palavra sumiria contra o clipe. -->
+      <div class="cena-brilho"></div>
+      <div class="cena-grade"></div>
+      <!-- cada linha é uma palavra partida em dois pedaços que se afastam
+           para as bordas: assim elas não empilham atrás do furo, que fica
+           bem no meio, e sobra o miolo da tela para o vídeo aparecer -->
+      <div class="cena-fantasma cena-fantasma--cima"><span data-i="cena_f1a">SCH</span><span data-i="cena_f1b">NELL</span></div>
+      <div class="cena-fantasma cena-fantasma--meio"><span data-i="cena_f2a">VON</span><span data-i="cena_f2b">HAND</span></div>
+      <div class="cena-fantasma cena-fantasma--baixo"><span data-i="cena_f3a">MEHR</span><span data-i="cena_f3b">SPRACHIG</span></div>
+    </div>
+    <canvas class="cena-canvas" id="cenaCanvas" aria-hidden="true"></canvas>
+    <!-- O vídeo nunca aparece: ele é só a fonte de pixels do canvas.
+         Fica 1px e invisível porque display:none faria o browser parar de
+         decodificar os quadros. O src entra por JS, só quando a seção chega perto. -->
+    <video class="cena-video" id="cenaVideo" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+    <!-- a palavra existe de verdade para leitor de tela e para o setLang -->
+    <p class="sr-only" id="cenaPalavra" data-i="cena_palavra">PREMIUM</p>
+    <div class="cena-dica" aria-hidden="true"><span></span></div>
+  </div>
+</section>
+
 <!-- ============ ABERTURA (a frase acende antes do portfólio) ============ -->
 <section id="intro" data-revelar>
   <div class="intro-pin">
@@ -1235,6 +1399,8 @@ const I18N = {
     manifesto_tag:"Manifest",
     manifesto:"Jedes Projekt auf dieser Seite ist online und von Hand gebaut. Ich fange beim Inhalt an, nicht beim Layout, und höre erst auf, wenn die Seite auf dem Handy genauso schnell ist wie auf dem Rechner.",
     hero_lead:"Ich baue Seiten, die schnell laden, premium aussehen und aus Besuchern Kunden machen.",
+    cena_palavra:"PREMIUM",
+    cena_f1a:"SCH", cena_f1b:"NELL", cena_f2a:"VON", cena_f2b:"HAND", cena_f3a:"MEHR", cena_f3b:"SPRACHIG",
     fato1:"Jedes Projekt hier ist von Hand geschrieben, ohne Baukasten und ohne fertiges Theme.",
     fato2:"Mehrsprachig ab der ersten Zeile, nicht als Übersetzung obendrauf.",
     fato3:"Vom Entwurf bis zur Domain online, mit Zahlung und Konten, wenn das Projekt es braucht."
@@ -1263,6 +1429,8 @@ const I18N = {
     manifesto_tag:"Manifesto",
     manifesto:"Every project on this page is live and built by hand. I start from the content, not the layout, and I am not done until the page is as fast on a phone as it is on a desktop.",
     hero_lead:"I build sites that load fast, look premium, and turn visitors into clients.",
+    cena_palavra:"PREMIUM",
+    cena_f1a:"FAST", cena_f1b:"LOAD", cena_f2a:"HAND", cena_f2b:"MADE", cena_f3a:"MULTI", cena_f3b:"LINGUAL",
     fato1:"Every project here is written by hand, with no site builder and no bought theme.",
     fato2:"Multilingual from the first line, not a translation pasted on later.",
     fato3:"From the first sketch to the domain going live, with payments and accounts when the project needs them."
@@ -1291,6 +1459,8 @@ const I18N = {
     manifesto_tag:"Manifesto",
     manifesto:"Todo projeto desta página está no ar e foi feito à mão. Começo pelo conteúdo, não pelo layout, e só termino quando a página está tão rápida no celular quanto no computador.",
     hero_lead:"Construo sites que carregam rápido, são premium e transformam visitantes em clientes.",
+    cena_palavra:"PREMIUM",
+    cena_f1a:"RÁ", cena_f1b:"PIDO", cena_f2a:"NA", cena_f2b:"MÃO", cena_f3a:"MULTI", cena_f3b:"LÍNGUE",
     fato1:"Cada projeto aqui foi escrito à mão, sem construtor e sem tema pronto.",
     fato2:"Multilíngue desde a primeira linha, não como tradução colada depois.",
     fato3:"Do rascunho ao domínio no ar, com pagamento e contas quando o projeto pede."
@@ -1301,7 +1471,7 @@ let lang = 'de';
 // Preenchidos mais abaixo, quando o letreiro e o visualizador são montados.
 // Precisam ser declarados ACIMA de setLang: initLang chama setLang logo em
 // seguida, e um let declarado depois estaria em zona morta temporal.
-let remontaLetreiro = null, traduzVisualizador = null, remontaRevelacao = null;
+let remontaLetreiro = null, traduzVisualizador = null, remontaRevelacao = null, remontaCena = null;
 
 function setLang(l, persist = true){
   lang = I18N[l] ? l : 'de';
@@ -1316,6 +1486,7 @@ function setLang(l, persist = true){
   if (remontaLetreiro) remontaLetreiro();
   if (traduzVisualizador) traduzVisualizador();
   if (remontaRevelacao) remontaRevelacao();   // setLang reescreveu o texto e apagou os spans
+  if (remontaCena) remontaCena();             // a palavra do canvas mudou de idioma
   if (persist) { try { localStorage.setItem('sux-lang', lang); } catch {} }
 }
 langButtons.forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
@@ -1348,7 +1519,7 @@ const secs = links.map(a => document.querySelector(a.getAttribute('href')));
 const plates = [...document.querySelectorAll('.proj-plate')];
 let scrollQueued = false, activeIdx = -1;
 // preenchido mais abaixo, quando o letreiro do eyebrow é montado
-let atualizaLetreiro = null, atualizaRevelacao = null;
+let atualizaLetreiro = null, atualizaRevelacao = null, atualizaCena = null;
 
 function onScroll(){
   scrollQueued = false;
@@ -1356,6 +1527,7 @@ function onScroll(){
 
   if (atualizaLetreiro) atualizaLetreiro(scrollY);
   if (atualizaRevelacao) atualizaRevelacao();
+  if (atualizaCena) atualizaCena();
 
   let idx = 0;
   secs.forEach((s,i) => { if (s && s.getBoundingClientRect().top <= innerHeight*0.5) idx = i; });
@@ -1525,6 +1697,234 @@ const revelacao = (function(){
   return { remonta, update };
 })();
 atualizaRevelacao = revelacao.update;
+
+/* ============ cena: o vídeo com a palavra vazada ============
+   O canvas cobre a tela com o vídeo e em seguida APAGA a palavra de dentro
+   dele, com destination-out. No lugar das letras não sobra tinta nenhuma,
+   é buraco de verdade (alpha 0), então quem aparece por dentro delas é o
+   HTML que está atrás do canvas: a grade e as palavras fantasma.
+   Rolando, a palavra vai sendo esticada até o buraco engolir a tela, e o
+   canvas some junto — a rolagem é entregue para a abertura.
+   O vídeo nunca é pintado na página: ele é só a textura do canvas. */
+const cena = (function(){
+  const nada  = { update(){}, remonta(){} };
+  const secao = document.getElementById('cena');
+  const cv    = document.getElementById('cenaCanvas');
+  const video = document.getElementById('cenaVideo');
+  const alvo  = document.getElementById('cenaPalavra');
+  if (!secao || !cv || !video || !alvo || reduced) return nada;
+  const ctx = cv.getContext('2d');
+  if (!ctx) return nada;
+  const dica = secao.querySelector('.cena-dica');
+  const pin  = secao.querySelector('.cena-pin') || secao;
+
+  const FAMILIA = '"Archivo",system-ui,sans-serif';
+  const MEDIR   = 200;    // tamanho de referência, só para medir a palavra
+  const FATIA_X   = .82;    // fatia da largura da tela que a palavra ocupa parada
+  const TAM_MAX = 460;
+  const ESC_X0 = .62, ESC_X1 = 6.4;    // condensada como o resto do site, e o fim do voo
+  const ESC_Y_MIN = 1.06;              // achatamento mínimo na vertical
+  const FATIA_Y = .20;                   // fatia da ALTURA da tela que a palavra ocupa parada
+  const ESTICA = 14.6;                 // quantas vezes a altura cresce até o fim do voo
+  // Recorte da fonte, em fração do quadro. O clipe é 1920x1080 nativo, então
+  // no desktop ele entra praticamente 1:1 — nada de esticar. Aí a sobra é
+  // horizontal, e `foco` (que só manda na vertical) fica inerte; ele volta a
+  // valer se um dia o arquivo for mais alto que largo.
+  const CORTE = { x:0, largura:1, foco:.5 };
+
+  let palavra = '', tamanho = 0, larguraLocal = 0, alturaLocal = 0;
+  let escY0 = ESC_Y_MIN, escY1 = ESC_Y_MIN * ESTICA;
+  let medidoEm = -1, medidoAlt = -1, pedido = 0, laco = 0, ativo = false, pediuFonte = false;
+  const est = { abertura:0, escX:ESC_X0, escY:escY0, opacidade:1, zoom:1.1 };
+
+  const faixa = (p,a,b) => Math.min(1, Math.max(0, (p - a) / (b - a)));
+  const entra = t => t * t;                 // acelera no fim, como um power2.in
+  const entre = (a,b,t) => a + (b - a) * t;
+  const temQuadro = () => video.readyState >= 2 && video.videoWidth > 0;
+
+  /* ---- a palavra ---- */
+  function remonta(){
+    palavra = (alvo.textContent || 'PREMIUM').trim().toUpperCase();
+    medidoEm = -1;                          // força medir de novo no próximo quadro
+    pede();
+  }
+
+  function mede(larguraCSS, alturaCSS){
+    ctx.font = `900 ${MEDIR}px ${FAMILIA}`;
+    const porPx = ctx.measureText(palavra).width / MEDIR;   // largura por px de fonte
+    if (!porPx) return false;
+    // tamanho tal que, na escala inicial, a palavra ocupe FATIA_X da largura
+    tamanho = Math.min(TAM_MAX, (larguraCSS * FATIA_X) / (porPx * ESC_X0));
+    ctx.font = `900 ${tamanho}px ${FAMILIA}`;
+    const m = ctx.measureText(palavra);
+    larguraLocal = m.width;
+    alturaLocal = (m.actualBoundingBoxAscent + m.actualBoundingBoxDescent) || tamanho * .72;
+    // Numa tela estreita a palavra sai pequena (quem manda é a largura) e a
+    // faixa vazada viraria um risco fino. Então a escala vertical inicial não
+    // é fixa: ela é a que faz a faixa ocupar FATIA_Y da altura, e nunca achata
+    // menos do que o mínimo. No desktop isso cai no mínimo e nada muda.
+    escY0 = Math.max(ESC_Y_MIN, (alturaCSS * FATIA_Y) / alturaLocal);
+    escY1 = escY0 * ESTICA;
+    medidoEm = larguraCSS;
+    medidoAlt = alturaCSS;
+    return true;
+  }
+
+  /* ---- o furo: a palavra desenhada em destination-out ---- */
+  function fura(w,h){
+    if (est.abertura <= .002) return;
+    ctx.save();
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.translate(w * .5, h * .5);
+    ctx.scale(est.escX, est.escY);
+    // abertura: uma janela que cresce da esquerda para a direita, então a
+    // palavra não aparece de uma vez, ela é varrida para dentro da tela
+    ctx.beginPath();
+    ctx.rect(-larguraLocal * .5, -alturaLocal, larguraLocal * est.abertura, alturaLocal * 2);
+    ctx.clip();
+    ctx.font = `900 ${tamanho}px ${FAMILIA}`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#000';                 // a cor não importa: só o alpha conta
+    ctx.fillText(palavra, 0, 0);
+    ctx.restore();
+  }
+
+  /* ---- o vídeo cobrindo a tela, sem deformar ----
+     Escolhe dentro do recorte a maior janela com a proporção da tela; o zoom
+     fecha essa janela em vez de esticar a imagem, então nada distorce. */
+  function cobre(w,h){
+    const fw = video.videoWidth, fh = video.videoHeight;
+    const rx = fw * CORTE.x, rw = fw * CORTE.largura, rh = fh;
+    const tela = w / h, recorte = rw / rh;
+    let jw = recorte > tela ? rh * tela : rw;
+    let jh = recorte > tela ? rh        : rw / tela;
+    jw /= est.zoom; jh /= est.zoom;
+    ctx.drawImage(video, rx + (rw - jw) * .5, (rh - jh) * CORTE.foco, jw, jh, 0, 0, w, h);
+  }
+
+  /* ---- enquanto o vídeo não chega (ou não vai chegar), um degradê quente
+         no tom médio dele, para o furo continuar tendo o que recortar ---- */
+  function degrade(w,h){
+    const g = ctx.createRadialGradient(w*.5, h*.38, 0, w*.5, h*.38, Math.max(w,h)*.8);
+    g.addColorStop(0,   '#4c525c');
+    g.addColorStop(.42, '#20232a');
+    g.addColorStop(1,   '#08090b');
+    ctx.fillStyle = g;
+    ctx.fillRect(0,0,w,h);
+  }
+
+  function desenha(){
+    pedido = 0;
+    const w = cv.clientWidth, h = cv.clientHeight;
+    if (!w || !h) return;
+
+    const dpr = Math.min(2, devicePixelRatio || 1);
+    const pw = Math.round(w * dpr), ph = Math.round(h * dpr);
+    if (cv.width !== pw || cv.height !== ph){ cv.width = pw; cv.height = ph; medidoEm = -1; }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+
+    if ((medidoEm !== w || medidoAlt !== h) && !mede(w, h)) return;
+
+    ctx.save();
+    // um pouco de brilho e contraste: o clipe é escuro demais cru
+    try { ctx.filter = 'saturate(1.1) contrast(1.15) brightness(1.34)'; } catch {}
+    if (temQuadro()) cobre(w,h); else degrade(w,h);
+    ctx.restore();
+
+    // vinheta no tom do fundo do site, para a borda do vídeo não ter costura
+    const v = ctx.createRadialGradient(w*.5, h*.46, Math.min(w,h)*.42, w*.5, h*.5, Math.max(w,h)*.78);
+    v.addColorStop(0, 'rgba(7,7,7,0)');
+    v.addColorStop(1, 'rgba(7,7,7,.78)');
+    ctx.fillStyle = v;
+    ctx.fillRect(0,0,w,h);
+
+    // Uma faixa escura na altura exata da palavra. A tela do laptop é a parte
+    // mais clara do clipe e cai bem no meio: sem isto, as letras do meio quase
+    // encostam no brilho do vídeo e a palavra some ali. Só a faixa escurece,
+    // então o resto do quadro continua com a luz que tem.
+    const alt = Math.min(h * 1.4, alturaLocal * est.escY * 1.7);
+    const f = ctx.createLinearGradient(0, h*.5 - alt*.5, 0, h*.5 + alt*.5);
+    f.addColorStop(0,  'rgba(6,6,8,0)');
+    f.addColorStop(.5, 'rgba(6,6,8,.3)');
+    f.addColorStop(1,  'rgba(6,6,8,0)');
+    ctx.fillStyle = f;
+    ctx.fillRect(0, h*.5 - alt*.5, w, alt);
+
+    fura(w,h);
+  }
+
+  const pede = () => { if (!pedido) pedido = requestAnimationFrame(desenha); };
+
+  // Com o vídeo rodando é preciso repintar todo quadro, não só ao rolar.
+  // Fora da tela o laço para e o vídeo pausa: nada de decodificar à toa.
+  function rodaLaco(){
+    if (!ativo){ laco = 0; return; }
+    desenha();
+    laco = requestAnimationFrame(rodaLaco);
+  }
+  function liga(){
+    ativo = true;
+    carregaVideo();
+    video.play().catch(() => {});
+    if (!laco) laco = requestAnimationFrame(rodaLaco);
+  }
+  function desliga(){
+    ativo = false;
+    if (laco){ cancelAnimationFrame(laco); laco = 0; }
+    video.pause();
+  }
+
+  /* ---- o vídeo só entra quando a seção está chegando ----
+     São 10 MB: baixar isso no primeiro paint atrasaria o site inteiro, e
+     em dados móveis nem vale a pena — o degradê cobre o caso. */
+  function carregaVideo(){
+    if (pediuFonte) return;
+    pediuFonte = true;
+    const rede = navigator.connection || {};
+    const magra = rede.saveData === true || /(^|-)2g$/.test(rede.effectiveType || '');
+    if (magra) return;
+    video.src = 'assets/codigo.mp4';
+    video.load();
+  }
+
+  video.addEventListener('loadeddata', () => { video.play().catch(() => {}); pede(); });
+  new IntersectionObserver(es => {
+    if (es.some(e => e.isIntersecting)) carregaVideo();
+  }, { rootMargin: '150% 0px' }).observe(secao);
+
+  // a fonte variável chega depois do primeiro quadro: sem isto a palavra
+  // ficaria medida e desenhada na fonte de sistema
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(remonta);
+
+  function update(){
+    const r = secao.getBoundingClientRect();
+    const visivel = r.bottom > 0 && r.top < innerHeight;
+    if (visivel !== ativo){ visivel ? liga() : desliga(); }
+    if (!visivel) return;
+
+    const curso = r.height - innerHeight;
+    const p = curso <= 0 ? 0 : Math.min(1, Math.max(0, -r.top / curso));
+
+    est.abertura  = faixa(p, 0, .10);
+    const voo     = entra(faixa(p, .08, .66));
+    est.escX      = entre(ESC_X0, ESC_X1, voo);
+    est.escY      = entre(escY0, escY1, voo);
+    est.zoom      = entre(1.1, 1, faixa(p, 0, .6));
+    est.opacidade = 1 - faixa(p, .58, .80);
+
+    cv.style.opacity = est.opacidade.toFixed(3);
+    pin.style.setProperty('--luz', faixa(p, .30, .86).toFixed(3));
+    if (dica) dica.style.opacity = (1 - faixa(p, 0, .09)).toFixed(3);
+  }
+
+  remontaCena = remonta;
+  remonta();
+  return { update, remonta };
+})();
+atualizaCena = cena.update;
+cena.update();
 
 /* ============ cursor próprio, com lupa sobre as capas ============ */
 (function(){
