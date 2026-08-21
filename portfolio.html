@@ -8,15 +8,15 @@
      Trocou de domínio? Só substituir https://sonouxcoder.github.io/portifolio-oficial
      em todo o arquivo (canonical, og:url, og:image, twitter:image e o JSON-LD).
      ========================================================================== -->
-<title>sono | Full-Stack Developer und UX·UI</title>
+<title>Portfolio | sono — Full-Stack Developer und UX·UI</title>
 <meta name="description" content="Full-Stack Developer und UX/UI-Designer in der Schweiz. Ich baue schnelle, mehrsprachige Websites, Online-Shops und eigene SaaS-Produkte.">
 <meta name="author" content="sono">
 <meta name="robots" content="index, follow">
 <meta name="theme-color" content="#070707">
-<link rel="canonical" href="https://sonouxcoder.github.io/portifolio-oficial/">
+<link rel="canonical" href="https://sonouxcoder.github.io/portifolio-oficial/portfolio.html">
 
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://sonouxcoder.github.io/portifolio-oficial/">
+<meta property="og:url" content="https://sonouxcoder.github.io/portifolio-oficial/portfolio.html">
 <meta property="og:site_name" content="sonoUXcoder">
 <meta property="og:title" content="sono | Full-Stack Developer und UX·UI">
 <meta property="og:description" content="Full-Stack Developer und UX/UI-Designer in der Schweiz. Ich baue schnelle, mehrsprachige Websites, Online-Shops und eigene SaaS-Produkte.">
@@ -747,12 +747,15 @@ footer a:hover{color:#fff}
   position:sticky;top:0;
   height:100vh;height:100svh;
   overflow:hidden;
-  background:#000;
+  background:var(--bg);
   isolation:isolate;
 }
-/* Fundo preto liso: o brilho roxo que havia aqui puxava a cena para o azul
-   e roubava o contraste das capas. */
-.deck-fundo{position:absolute;inset:0;z-index:0;overflow:hidden;background:#000}
+.deck-fundo{position:absolute;inset:0;z-index:0;overflow:hidden}
+.deck-fundo::after{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 46%,var(--accent-glow),transparent 58%);
+  opacity:.34;
+}
 .deck-fantasma{
   position:absolute;left:50%;top:50%;
   display:flex;justify-content:space-between;
@@ -791,9 +794,6 @@ footer a:hover{color:#fff}
   opacity:0;transition:opacity .4s;
 }
 .deck-carta:hover .deck-carta-nome,.deck-carta:focus-visible .deck-carta-nome{opacity:1}
-.deck-carta-nome i{display:block;font-style:normal;color:var(--accent-ink);margin-bottom:5px}
-/* depois que o baralho abre, a numeração fica à mostra: é ela que diz a ordem */
-.deck-pin.chamada .deck-carta-nome{opacity:1}
 .deck-carta--front,.deck-carta--back{width:min(470px,47vh);height:min(600px,60vh)}
 .deck-carta--left,.deck-carta--right{width:min(345px,34.5vh);height:min(377px,37.7vh)}
 .deck-carta--front{z-index:4}
@@ -806,20 +806,14 @@ footer a:hover{color:#fff}
   margin:0;width:100%;text-align:center;
   font-size:clamp(72px,10vw,160px);line-height:1;
   font-weight:900;font-variation-settings:"wdth" 74;
-  letter-spacing:-.055em;text-transform:uppercase;color:#fff;
+  letter-spacing:-.055em;text-transform:uppercase;color:#f7f4ef;
   overflow:hidden;pointer-events:none;
-  /* Branco chapado sumia em cima das capas claras. Com difference a palavra
-     inverte o que estiver atrás: fica escura sobre capa clara, clara sobre
-     capa escura — sempre legível, sem precisar de sombra por baixo. */
-  mix-blend-mode:difference;
 }
 .deck-titulo span{display:inline-block;will-change:transform,opacity}
 
-/* No centro, não no rodapé: quando o baralho abre as quatro capas vão para
-   os cantos e o miolo fica livre — é ali que o botão tem que nascer. */
 .deck-cta{
-  position:absolute;left:50%;top:50%;z-index:21;
-  transform:translate(-50%,-50%) translateY(14px);
+  position:absolute;left:50%;bottom:clamp(38px,7vh,88px);z-index:21;
+  transform:translateX(-50%) translateY(14px);
   display:inline-flex;align-items:center;gap:12px;
   padding:14px 22px;border:1px solid var(--line);border-radius:999px;
   background:rgba(255,255,255,.04);
@@ -830,7 +824,7 @@ footer a:hover{color:#fff}
   transition:opacity .6s cubic-bezier(.22,1,.36,1), transform .6s cubic-bezier(.22,1,.36,1),
              border-color .3s, background .3s;
 }
-.deck-pin.chamada .deck-cta{opacity:1;transform:translate(-50%,-50%) translateY(0);pointer-events:auto}
+.deck-pin.chamada .deck-cta{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
 .deck-cta:hover{border-color:var(--accent);background:var(--accent-soft)}
 .deck-cta i{display:block;width:18px;height:1px;background:currentColor;transition:width .35s cubic-bezier(.22,1,.36,1)}
 .deck-cta:hover i{width:30px}
@@ -1188,7 +1182,7 @@ body.viewer-aberto{overflow:hidden}
 </head>
 <body>
 
-<a class="skip" href="#hero" data-i="skip">Zum Inhalt springen</a>
+<a class="skip" href="#work" data-i="skip">Zum Inhalt springen</a>
 
 <div class="grid-bg"></div>
 <div class="noise"></div>
@@ -1198,8 +1192,8 @@ body.viewer-aberto{overflow:hidden}
   <a class="brand" href="#hero"><img src="assets/avatar.webp" width="30" height="30" alt="" aria-hidden="true"><b>sonoUXcoder</b><span>.dev</span></a>
   <div class="nav-right">
     <div class="nav-links">
-      <a href="#hero" class="active" data-i="nav_home">Start</a>
-      <a href="portfolio.html" data-i="nav_work">Portfolio</a>
+      <a href="index.html" data-i="nav_home">Start</a>
+      <a href="#work" class="active" data-i="nav_work">Portfolio</a>
       <a href="#end" data-i="nav_contact">Kontakt</a>
     </div>
     <div class="lang-switch" role="group" aria-label="Sprache / Language / Idioma">
@@ -1210,166 +1204,99 @@ body.viewer-aberto{overflow:hidden}
   </div>
 </nav>
 
-<!-- ================= LOADER ================= -->
-<div id="loader" role="status" aria-live="polite">
-  <div class="hello-stage"><span class="hello-word"></span></div>
-  <div class="loader-line"><span></span></div>
-  <button class="loader-skip" type="button" id="loaderSkip" data-i="loader_skip">überspringen</button>
-</div>
-
-<!-- ================= HERO ================= -->
-<section class="panel" id="hero">
-  <div class="hero-wrap">
-    <div>
-      <div class="eyebrow">
-        <span class="eyebrow-window"><span class="eyebrow-track"><span data-i="eyebrow">Verfügbar für Projekte</span></span></span>
-      </div>
-      <h1 class="hero-title">Full-Stack<br>Developer<br><em>&amp; UX·UI</em></h1>
-      <div class="roles"><b>Software Engineer</b>, Front-end, Back-end, <b>UX·UI</b></div>
-      <p class="hero-p" data-i="hero_p">
-        Ich baue Websites und Web-Apps von Anfang bis Ende. Design in Figma,
-        Frontend mit React und Next.js, Backend mit Node und PostgreSQL.
-        Mehrsprachig, schnell und sauber gebaut.
-      </p>
-      <div class="chips">
-        <span class="chip">TypeScript</span>
-        <span class="chip">React.js</span>
-        <span class="chip">Next.js</span>
-        <span class="chip">Node.js</span>
-        <span class="chip">Figma</span>
-        <span class="chip">Tailwind</span>
-      </div>
-      <div class="hero-social">
-        <a href="https://github.com/SonoUXCODER" target="_blank" rel="noopener">↗ GitHub</a>
-        <a href="https://instagram.com/somnifobias" target="_blank" rel="noopener">↗ @somnifobias</a>
-        <a href="mailto:alissonvpt1@gmail.com">↗ E-mail</a>
-      </div>
-    </div>
-
-    <div class="badge-zone">
-      <div class="badge-rig" id="rig">
-        <div class="lanyard"></div>
-        <div id="hang">
-        <div class="ring"></div>
-        <div class="clip"></div>
-        <div class="badge-card" id="card">
-          <div class="photo-wrap">
-            <img class="badge-photo" src="assets/foto-cracha.webp" width="620" height="827" alt="sono" fetchpriority="high">
-            <div class="holo"></div>
-            <div class="holo2"></div>
-            <div class="holo3"></div>
-          </div>
-          <div class="badge-meta">
-            <div>
-              <div class="name">sono</div>
-              <div class="role">FULL-STACK UX·UI</div>
-            </div>
-            <div class="badge-bar">
-              <div class="barcode" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-              ID·SONOUXCODER
-            </div>
-          </div>
-        </div>
-        </div><!-- /hang -->
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ CENA: a palavra recortada no vídeo ============
-     Uma seção alta com o miolo presinho no topo; a altura que sobra é o
-     curso da animação. O canvas cobre a tela com o vídeo e depois desenha
-     a palavra em destination-out: dentro das letras não fica tinta nenhuma,
-     então o furo mostra o que está ATRÁS no HTML (a grade e as palavras
-     fantasma). Rolando, o furo cresce até engolir a tela — a gente atravessa
-     a letra e cai na frase da abertura.
-     Sem .panel de propósito: o overflow:hidden dele viraria contêiner de
-     rolagem e o sticky de dentro deixaria de grudar. -->
-<section id="cena">
-  <div class="cena-pin">
-    <div class="cena-fundo" aria-hidden="true">
-      <!-- a palavra é um buraco no vídeo, então quem acende as letras por
-           dentro é esta camada. Sem ela o furo mostraria só o preto do site
-           e a palavra sumiria contra o clipe. -->
-      <div class="cena-brilho"></div>
-      <div class="cena-grade"></div>
-      <!-- cada linha é uma palavra partida em dois pedaços que se afastam
-           para as bordas: assim elas não empilham atrás do furo, que fica
-           bem no meio, e sobra o miolo da tela para o vídeo aparecer -->
-      <div class="cena-fantasma cena-fantasma--cima"><span data-i="cena_f1a">SCH</span><span data-i="cena_f1b">NELL</span></div>
-      <div class="cena-fantasma cena-fantasma--meio"><span data-i="cena_f2a">VON</span><span data-i="cena_f2b">HAND</span></div>
-      <div class="cena-fantasma cena-fantasma--baixo"><span data-i="cena_f3a">MEHR</span><span data-i="cena_f3b">SPRACHIG</span></div>
-    </div>
-    <canvas class="cena-canvas" id="cenaCanvas" aria-hidden="true"></canvas>
-    <!-- O vídeo nunca aparece: ele é só a fonte de pixels do canvas.
-         Fica 1px e invisível porque display:none faria o browser parar de
-         decodificar os quadros. O src entra por JS, só quando a seção chega perto. -->
-    <video class="cena-video" id="cenaVideo" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
-    <!-- a palavra existe de verdade para leitor de tela e para o setLang -->
-    <p class="sr-only" id="cenaPalavra" data-i="cena_palavra">PREMIUM</p>
-    <div class="cena-dica" aria-hidden="true"><span></span></div>
-  </div>
-</section>
-
-<!-- ============ ABERTURA (a frase acende antes do portfólio) ============ -->
-<section id="intro" data-revelar>
-  <div class="intro-pin">
-    <p class="reveal reveal-hero" data-i="hero_lead">Ich baue Seiten, die schnell laden, premium aussehen und aus Besuchern Kunden machen.</p>
-  </div>
-</section>
-
-<!-- ============ BARALHO: as capas empilhadas que se separam ============
-     Quatro capas nascem uma em cima da outra no meio da tela, com a palavra
-     PORTFOLIO por cima e três pares de palavras gigantes ao fundo. Rolando,
-     a palavra sai, o baralho se abre e cada capa voa para o seu canto — só
-     então aparece o botão que leva à lista de projetos.
-     A --back começa escondida atrás da --front de propósito: quando o
-     baralho abre, sai uma carta que ninguém sabia que estava ali. -->
-<section id="deck">
-  <div class="deck-pin">
-    <div class="deck-fundo" aria-hidden="true">
-      <div class="deck-fantasma deck-fantasma--cima"><span data-i="deck_f1a">HAND</span><span data-i="deck_f1b">ARBEIT</span></div>
-      <div class="deck-fantasma deck-fantasma--meio"><span data-i="deck_f2a">MEHR</span><span data-i="deck_f2b">SPRACHIG</span></div>
-      <div class="deck-fantasma deck-fantasma--baixo"><span data-i="deck_f3a">ERFAH</span><span data-i="deck_f3b">RUNG</span></div>
-    </div>
-
-    <div class="deck-mesa" id="deckMesa">
-      <button class="deck-carta deck-carta--back"  type="button" data-projeto="3"><img src="assets/projetos/fg-cover.webp"     alt="" loading="lazy" decoding="async"><span class="deck-carta-nome"><i>/04</i>Truffle N.B.</span></button>
-      <button class="deck-carta deck-carta--left"  type="button" data-projeto="1"><img src="assets/projetos/sandra-cover.webp" alt="" loading="lazy" decoding="async"><span class="deck-carta-nome"><i>/02</i>Sandra Hair Salon</span></button>
-      <button class="deck-carta deck-carta--right" type="button" data-projeto="2"><img src="assets/projetos/knifes-cover.webp" alt="" loading="lazy" decoding="async"><span class="deck-carta-nome"><i>/03</i>knifes.me</span></button>
-      <button class="deck-carta deck-carta--front" type="button" data-projeto="0"><img src="assets/projetos/thayse-cover.webp" alt="" loading="lazy" decoding="async"><span class="deck-carta-nome"><i>/01</i>Dra. Thayse Marques</span></button>
-    </div>
-
-    <h2 class="deck-titulo" aria-hidden="true"><span>PORTFOLIO</span></h2>
-
-    <a class="deck-cta" href="portfolio.html"><span data-i="deck_cta">Portfolio ansehen</span><i></i></a>
-  </div>
-</section>
-
-<!-- ================= MANIFESTO (texto que revela com a rolagem) ================= -->
-<section id="manifesto" data-revelar>
-  <div class="manifesto-pin">
-    <div class="manifesto-inner">
-      <div class="manifesto-tag" data-i="manifesto_tag">Manifest</div>
-      <p class="reveal reveal-grande" data-i="manifesto">Jedes Projekt auf dieser Seite ist online und von Hand gebaut. Ich fange beim Inhalt an, nicht beim Layout, und höre erst auf, wenn die Seite auf dem Handy genauso schnell ist wie auf dem Rechner.</p>
-      <ol class="manifesto-fatos">
-        <li><span class="fato-n">01</span><p class="reveal" data-i="fato1">Jedes Projekt hier ist von Hand geschrieben, ohne Baukasten und ohne fertiges Theme.</p></li>
-        <li><span class="fato-n">02</span><p class="reveal" data-i="fato2">Mehrsprachig ab der ersten Zeile, nicht als Übersetzung obendrauf.</p></li>
-        <li><span class="fato-n">03</span><p class="reveal" data-i="fato3">Vom Entwurf bis zur Domain online, mit Zahlung und Konten, wenn das Projekt es braucht.</p></li>
-      </ol>
-    </div>
-  </div>
-</section>
-
-<!-- ================= 3D LAB ================= -->
-<section class="panel" id="lab">
+<!-- ================= SHOWCASE ================= -->
+<section class="panel" id="work">
   <div class="sec-head rv">
-    <h2 data-i="lab_h">3D Playground</h2>
-    <p data-i="lab_p">ein Arbeitsplatz in WebGL, live gerendert. Ziehen zum Drehen.</p>
+    <h2 data-i="work_h">Portfolio Showcase</h2>
+    <p data-i="work_p">Projekte und Technologien</p>
+    <div class="tabs" role="tablist" aria-label="Portfolio">
+      <button class="tab" id="tab-proj" data-pane="p-proj" role="tab" aria-selected="true" aria-controls="p-proj" tabindex="0" data-i="tab_proj">Projekte</button>
+      <button class="tab" id="tab-tech" data-pane="p-tech" role="tab" aria-selected="false" aria-controls="p-tech" tabindex="-1">Tech Stack</button>
+    </div>
   </div>
-  <div class="lab-stage rv" id="labStage">
-    <span class="lab-tag">THREE.JS / WEBGL</span>
-    <span class="lab-hint" data-i="lab_hint">zum Drehen ziehen</span>
+
+  <div class="pane proj-grid show" id="p-proj" role="tabpanel" aria-labelledby="tab-proj" tabindex="0">
+
+    <article class="proj rv" data-url="https://drathaysemarques.adv.br/" data-modo="iframe">
+      <button class="proj-media" type="button">
+        <div class="proj-plate">
+          <img class="proj-cover" src="assets/projetos/thayse-cover.webp" width="3150" height="1969" alt="" loading="lazy" decoding="async">
+          <img class="proj-scroll" data-src="assets/projetos/thayse-long.webp" width="1400" height="4400" alt="" decoding="async">
+        </div>
+        <span class="proj-glare"></span>
+      </button>
+      <div class="proj-body">
+        <div class="proj-top"><span class="num">/01</span></div>
+        <h3 data-i="p1_h">Dra. Thayse Marques Lima</h3>
+        <p data-i="p1_p">Website einer Anwaltskanzlei in Rio de Janeiro. Ein kurzes Formular nimmt den Fall auf und leitet ihn an das richtige Rechtsgebiet weiter. Dazu Terminbuchung online, WhatsApp und acht Rechtsgebiete mit eigenen Seiten.</p>
+        <div class="stack">STATIC, JS, WHATSAPP, SEO</div>
+      </div>
+    </article>
+
+    <article class="proj rv" data-url="https://sandrahairsalon.ch/" data-modo="iframe">
+      <button class="proj-media" type="button">
+        <div class="proj-plate">
+          <img class="proj-cover" src="assets/projetos/sandra-cover.webp" width="3150" height="1969" alt="" loading="lazy" decoding="async">
+          <img class="proj-scroll" data-src="assets/projetos/sandra-long.webp" width="1400" height="4400" alt="" decoding="async">
+        </div>
+        <span class="proj-glare"></span>
+      </button>
+      <div class="proj-body">
+        <div class="proj-top"><span class="num">/02</span></div>
+        <h3 data-i="p2_h">Sandra Hair Salon</h3>
+        <p data-i="p2_p">Landingpage für einen Coiffeur-Salon in Buchs SG. Sprachumschaltung, Preisliste in CHF, Terminanfrage und WhatsApp direkt aus der Seite heraus.</p>
+        <div class="stack">STATIC, JS, I18N, WHATSAPP</div>
+      </div>
+    </article>
+
+    <article class="proj rv" data-url="https://knifes.me/" data-modo="shot">
+      <button class="proj-media" type="button">
+        <div class="proj-plate">
+          <img class="proj-cover" src="assets/projetos/knifes-cover.webp" width="3150" height="1969" alt="" loading="lazy" decoding="async">
+          <img class="proj-scroll" data-src="assets/projetos/knifes-long.webp" width="1400" height="4400" alt="" decoding="async">
+        </div>
+        <span class="proj-glare"></span>
+      </button>
+      <div class="proj-body">
+        <div class="proj-top"><span class="num">/03</span><span class="proj-flag" data-i="p3_flag">Eigenes Produkt</span></div>
+        <h3 data-i="p3_h">knifes.me</h3>
+        <p data-i="p3_p">Mein eigenes Produkt, ein Link-in-Bio-SaaS. Jede Person bekommt knifes.me/name und stellt Farbe, Musik, Hintergrund und Layout selbst ein. Mit Konten, Ranking und Abo-Abrechnung.</p>
+        <div class="stack">NEXT.JS, SUPABASE, STRIPE, TAILWIND</div>
+      </div>
+    </article>
+
+    <article class="proj rv" data-url="https://kyso1.github.io/fg-systems/" data-modo="iframe">
+      <button class="proj-media" type="button">
+        <div class="proj-plate">
+          <img class="proj-cover" src="assets/projetos/fg-cover.webp" width="3150" height="1969" alt="" loading="lazy" decoding="async">
+          <img class="proj-scroll" data-src="assets/projetos/fg-long.webp" width="1400" height="4400" alt="" decoding="async">
+        </div>
+        <span class="proj-glare"></span>
+      </button>
+      <div class="proj-body">
+        <div class="proj-top"><span class="num">/04</span></div>
+        <h3 data-i="p4_h">Truffle N.B. Tricolore</h3>
+        <p data-i="p4_p">Online-Shop für frische Trüffel aus Italien, geliefert in die ganze Schweiz. Katalog, Warenkorb, Kundenkonto und Bezahlung über Stripe mit Karte oder TWINT.</p>
+        <div class="stack">REACT, VITE, STRIPE, TWINT</div>
+      </div>
+    </article>
+
+  </div>
+
+  <div class="pane tech-grid" id="p-tech" role="tabpanel" aria-labelledby="tab-tech" tabindex="0">
+    <div class="tile rv" style="--c:#61DAFB"><div class="glyph" aria-hidden="true">⚛</div><div class="label">React.js</div></div>
+    <div class="tile rv" style="--c:#3178C6"><div class="glyph" aria-hidden="true">TS</div><div class="label">TypeScript</div></div>
+    <div class="tile rv" style="--c:#38BDF8"><div class="glyph" aria-hidden="true">~</div><div class="label">Tailwind</div></div>
+    <div class="tile rv" style="--c:#E34F26"><div class="glyph" aria-hidden="true">5</div><div class="label">HTML5</div></div>
+    <div class="tile rv" style="--c:#1572B6"><div class="glyph" aria-hidden="true">{}</div><div class="label">CSS3</div></div>
+    <div class="tile rv" style="--c:#F7DF1E"><div class="glyph" aria-hidden="true">JS</div><div class="label">JavaScript</div></div>
+    <div class="tile rv" style="--c:#ffffff"><div class="glyph" aria-hidden="true">▲</div><div class="label">Next.js</div></div>
+    <div class="tile rv" style="--c:#5FA04E"><div class="glyph" aria-hidden="true">◍</div><div class="label">Node.js</div></div>
+    <div class="tile rv" style="--c:#4169E1"><div class="glyph" aria-hidden="true">▤</div><div class="label">PostgreSQL</div></div>
+    <div class="tile rv" style="--c:#3ECF8E"><div class="glyph" aria-hidden="true">◈</div><div class="label">Supabase</div></div>
+    <div class="tile rv" style="--c:#635BFF"><div class="glyph" aria-hidden="true">S</div><div class="label">Stripe</div></div>
+    <div class="tile rv" style="--c:#A259FF"><div class="glyph" aria-hidden="true">✎</div><div class="label">Figma</div></div>
+    <div class="tile rv" style="--c:#F05032"><div class="glyph" aria-hidden="true">⎇</div><div class="label">Git</div></div>
   </div>
 </section>
 
@@ -1447,7 +1374,7 @@ const I18N = {
     p3_p:"Mein eigenes Produkt, ein Link-in-Bio-SaaS. Jede Person bekommt knifes.me/name und stellt Farbe, Musik, Hintergrund und Layout selbst ein. Mit Konten, Ranking und Abo-Abrechnung.",
     p4_h:"Truffle N.B. Tricolore",
     p4_p:"Online-Shop für frische Trüffel aus Italien, geliefert in die ganze Schweiz. Katalog, Warenkorb, Kundenkonto und Bezahlung über Stripe mit Karte oder TWINT.",
-    lab_h:"3D Playground", lab_p:"ein Arbeitsplatz in WebGL, live gerendert. Ziehen zum Drehen.", lab_hint:"zum Drehen ziehen",
+    lab_h:"3D Playground", lab_p:"eine Uhr in WebGL, live gerendert. Die Zeiger laufen in Echtzeit.", lab_hint:"zum Drehen ziehen",
     end_h:'Lass uns etwas<br><em>gemeinsam bauen</em>',
     end_sub:"full-stack developer und ux·ui designer",
     btn_mail:"E-Mail senden", btn_copy:"E-Mail kopieren", btn_copied:"kopiert ✓",
@@ -1478,7 +1405,7 @@ const I18N = {
     p3_p:"My own product, a link-in-bio SaaS. Everyone gets knifes.me/name and sets the colour, music, background and layout themselves. With accounts, a ranking and subscription billing.",
     p4_h:"Truffle N.B. Tricolore",
     p4_p:"Online shop for fresh truffles from Italy, delivered across Switzerland. Catalogue, cart, customer account and payment through Stripe by card or TWINT.",
-    lab_h:"3D Playground", lab_p:"a WebGL workstation, rendered live. Drag to spin it.", lab_hint:"drag to rotate",
+    lab_h:"3D Playground", lab_p:"a WebGL watch, rendered live. The hands run in real time.", lab_hint:"drag to rotate",
     end_h:"Let's build<br><em>something together</em>",
     end_sub:"full-stack developer and ux·ui designer",
     btn_mail:"Send e-mail", btn_copy:"Copy e-mail", btn_copied:"copied ✓",
@@ -1509,7 +1436,7 @@ const I18N = {
     p3_p:"Meu próprio produto, um SaaS de link na bio. Cada pessoa ganha knifes.me/nome e escolhe cor, música, fundo e layout. Com contas, ranking e cobrança de assinatura.",
     p4_h:"Truffle N.B. Tricolore",
     p4_p:"Loja on-line de trufas frescas da Itália, entregues em toda a Suíça. Catálogo, carrinho, conta de cliente e pagamento pela Stripe com cartão ou TWINT.",
-    lab_h:"3D Playground", lab_p:"uma estação de trabalho em WebGL, renderizada ao vivo. Arraste para girar.", lab_hint:"arraste para girar",
+    lab_h:"3D Playground", lab_p:"um relógio em WebGL, renderizado ao vivo. Os ponteiros andam em tempo real.", lab_hint:"arraste para girar",
     end_h:"Vamos construir<br><em>algo juntos</em>",
     end_sub:"full-stack developer e ux·ui designer",
     btn_mail:"Enviar e-mail", btn_copy:"Copiar e-mail", btn_copied:"copiado ✓",
@@ -1576,7 +1503,7 @@ langButtons.forEach(b => b.addEventListener('click', () => setLang(b.dataset.lan
 const nav = document.getElementById('nav');
 const links = [...document.querySelectorAll('.nav-links a')];
 // só os links de âncora viram seções observadas: um href de outra página
-// (portfolio.html) não é seletor válido e derrubaria o querySelector
+// (index.html) não é seletor válido e derrubaria o querySelector
 const secs = links.map(a => {
   const h = a.getAttribute('href') || '';
   return h.startsWith('#') ? document.querySelector(h) : null;
@@ -2010,18 +1937,16 @@ const baralho = (function(){
 
   // dx e dy em fração do pin, giro em graus, escala, opacidade
   const POSES = {
-    // As quatro poses finais são quadrantes, e a ordem de leitura segue a
-    // numeração dos projetos: 01 em cima à esquerda, 02 em cima à direita,
-    // 03 embaixo à esquerda, 04 embaixo à direita. O miolo fica vazio de
-    // propósito — é onde o botão nasce.
-    front:{ de:{dx: 0,    dy: 0,    giro: 0,     esc:1,   op:1},   // 01
-            para:{dx:-.31, dy:-.19, giro:-3,     esc:.46, op:1} },
-    left: { de:{dx:-.34,  dy:-.03,  giro:-5.875, esc:1,   op:.5},  // 02
-            para:{dx: .31, dy:-.19, giro: 3,     esc:.68, op:1} },
-    right:{ de:{dx: .34,  dy:-.03,  giro: 5.875, esc:1,   op:.5},  // 03
-            para:{dx:-.31, dy: .21, giro:-4,     esc:.68, op:1} },
-    back: { de:{dx: 0,    dy: 0,    giro: 0,     esc:1,   op:1},   // 04
-            para:{dx: .31, dy: .21, giro: 3.5,   esc:.46, op:1} }
+    // As quatro poses finais ficam nos cantos de propósito: o miolo e o rodapé
+    // do meio precisam sobrar livres, porque é ali que entra o botão.
+    front:{ de:{dx: 0,    dy: 0,    giro: 0,     esc:1,   op:1},
+            para:{dx:-.32, dy:-.16, giro:-3,     esc:.50, op:1} },
+    back: { de:{dx: 0,    dy: 0,    giro: 0,     esc:1,   op:1},
+            para:{dx: .33, dy: .14, giro: 3.5,   esc:.52, op:1} },
+    left: { de:{dx:-.34,  dy:-.03,  giro:-5.875, esc:1,   op:.5},
+            para:{dx:-.28, dy: .24, giro:-6,     esc:.74, op:1} },
+    right:{ de:{dx: .34,  dy:-.03,  giro: 5.875, esc:1,   op:.5},
+            para:{dx: .27, dy:-.22, giro: 4,     esc:.78, op:1} }
   };
   const cartas = [...mesa.querySelectorAll('.deck-carta')].map(el => ({
     el, pose: POSES[[...el.classList].find(c => c.startsWith('deck-carta--')).slice(12)]
@@ -2078,12 +2003,15 @@ const baralho = (function(){
     pinta(p);
   }
 
-  // A lista de projetos agora vive noutra página, então a carta leva para lá
-  // já pedindo a prévia daquele projeto — o #p1 é lido do outro lado.
+  // clicar numa carta abre a prévia do projeto correspondente, reaproveitando
+  // o visualizador que já existe — o botão da capa lá embaixo faz o mesmo
   mesa.addEventListener('click', e => {
     const carta = e.target.closest('.deck-carta');
     if (!carta) return;
-    location.href = 'portfolio.html#p' + (+carta.dataset.projeto + 1);
+    const i = +carta.dataset.projeto;
+    const alvo = document.querySelectorAll('.proj')[i];
+    const botao = alvo && alvo.querySelector('.proj-media');
+    if (botao) botao.click();
   });
 
   addEventListener('resize', () => { ultimoP = -1; update(); }, {passive:true});
@@ -2092,6 +2020,23 @@ const baralho = (function(){
 })();
 atualizaBaralho = baralho.update;
 baralho.update();
+
+/* ============ chegada vinda do baralho da home ============
+   As capas da home levam para cá com #p1..#p4. Se o hash veio assim, a gente
+   rola até o projeto e abre a prévia dele — o clique lá continua valendo
+   aqui, em vez de largar a pessoa no topo de uma lista. */
+(function(){
+  const m = /^#p([1-9]\d*)$/.exec(location.hash || '');
+  if (!m) return;
+  const alvo = document.querySelectorAll('.proj')[+m[1] - 1];
+  if (!alvo) return;
+  history.replaceState(null, '', location.pathname);   // limpa o hash da barra
+  requestAnimationFrame(() => {
+    alvo.scrollIntoView({ block: 'center' });
+    const botao = alvo.querySelector('.proj-media');
+    if (botao) setTimeout(() => botao.click(), 420);   // deixa a rolagem assentar
+  });
+})();
 
 /* ============ cursor próprio, com lupa sobre as capas ============ */
 (function(){
@@ -2285,33 +2230,17 @@ document.getElementById('copyMail').addEventListener('click', async e => {
   const THREE_SRI = 'sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu';
   let started = false, visible = false;
 
-  // O three vem da CDN com hash de integridade, como antes. Os complementos
-  // do FBX ficam hospedados aqui: são quatro arquivos pequenos, e local
-  // dispensa hash, funciona offline e não depende de mais um domínio no ar.
-  const EXTRAS = [
-    'assets/vendor/fflate.min.js',
-    'assets/vendor/NURBSUtils.js',
-    'assets/vendor/NURBSCurve.js',
-    'assets/vendor/FBXLoader.js'
-  ];
-
-  function script(src, sri){
+  function loadThree(){
     return new Promise((resolve, reject) => {
+      if (typeof THREE !== 'undefined') return resolve();
       const s = document.createElement('script');
-      s.src = src;
-      if (sri){ s.integrity = sri; s.crossOrigin = 'anonymous'; }
+      s.src = THREE_SRC;
+      s.integrity = THREE_SRI;
+      s.crossOrigin = 'anonymous';
       s.onload = resolve;
-      s.onerror = () => reject(new Error(src));
+      s.onerror = reject;
       document.head.appendChild(s);
     });
-  }
-
-  async function loadThree(){
-    if (typeof THREE === 'undefined') await script(THREE_SRC, THREE_SRI);
-    if (typeof THREE.FBXLoader === 'undefined'){
-      // em série: o FBXLoader confere fflate e NURBS no momento em que é lido
-      for (const src of EXTRAS) await script(src);
-    }
   }
 
   function init(){
@@ -2363,94 +2292,161 @@ document.getElementById('copyMail').addEventListener('click', async e => {
 
     const watch = new THREE.Group();
     scene.add(watch);
-    watch.rotation.x = -0.15;
+    const R = 1.9;
 
-    /* A tela do monitor é desenhada aqui, não vem do arquivo: assim o nome
-       fica nítido em qualquer resolução e dá para mexer no texto sem abrir
-       um editor 3D. O material da tela no FBX se chama 螢幕 e é o único que
-       traz mapa, então dá para achá-lo pelos dois caminhos. */
-    function telaTextura(){
-      const c = document.createElement('canvas');
-      c.width = 1024; c.height = 640;                  // 1.6, a proporção da tela do modelo
-      const x = c.getContext('2d');
+    const caseBody = new THREE.Mesh(new THREE.CylinderGeometry(R*1.16, R*1.1, 0.75, 64), steelBrushed);
+    caseBody.rotation.x = Math.PI/2; watch.add(caseBody);
 
-      x.fillStyle = '#08080d';
-      x.fillRect(0, 0, c.width, c.height);
+    const back = new THREE.Mesh(new THREE.CylinderGeometry(R*0.95, R*0.95, 0.12, 64), steel);
+    back.rotation.x = Math.PI/2; back.position.z = -0.42; watch.add(back);
 
-      // barra de título, para a tela parecer um editor e não um cartaz
-      x.fillStyle = '#101019';
-      x.fillRect(0, 0, c.width, 54);
-      ['#ff5f57','#febc2e','#28c840'].forEach((cor, i) => {
-        x.fillStyle = cor; x.beginPath();
-        x.arc(28 + i * 26, 27, 7, 0, Math.PI * 2); x.fill();
-      });
-
-      // linhas de código de mentira, só como textura de fundo
-      x.font = '19px "IBM Plex Mono", ui-monospace, monospace';
-      const cores = ['#4b4b63','#6f5bd0','#3f7a68','#4b4b63','#8a6bd6'];
-      for (let i = 0; i < 13; i++){
-        x.fillStyle = cores[i % cores.length];
-        x.globalAlpha = .55;
-        x.fillText('· '.repeat(2 + (i % 3)) + '—'.repeat(6 + (i * 7) % 26), 34, 96 + i * 27);
+    (function flutedBezel(){
+      const bezel = new THREE.Group();
+      const base = new THREE.Mesh(new THREE.TorusGeometry(R*1.04, 0.15, 24, 96), steel);
+      base.position.z = 0.36; bezel.add(base);
+      const N = 72;
+      for (let i = 0; i < N; i++){
+        const a = (i/N)*Math.PI*2;
+        const tooth = new THREE.Mesh(new THREE.BoxGeometry(0.075, 0.2, 0.14), steel);
+        tooth.position.set(Math.cos(a)*R*1.04, Math.sin(a)*R*1.04, 0.45);
+        tooth.rotation.z = a + Math.PI/4;
+        bezel.add(tooth);
       }
-      x.globalAlpha = 1;
+      watch.add(bezel);
+    })();
 
-      // o nome, que é o motivo de tudo isto
-      const cxm = c.width / 2, cym = c.height / 2 + 16;
-      x.textAlign = 'center';
-      x.shadowColor = 'rgba(124,92,255,.85)'; x.shadowBlur = 46;
-      x.fillStyle = '#ffffff';
-      x.font = '700 108px Archivo, system-ui, sans-serif';
-      x.fillText('sono', cxm, cym);
-      x.shadowBlur = 0;
-      x.fillStyle = '#b9a5ff';
-      x.font = '500 44px "IBM Plex Mono", ui-monospace, monospace';
-      x.fillText('c o d e r', cxm, cym + 62);
-
+    function dialTexture(){
+      const S = 1024;
+      const c = document.createElement('canvas');
+      c.width = c.height = S;
+      const g = c.getContext('2d');
+      const cx = S/2;
+      const rg = g.createRadialGradient(cx,cx,0,cx,cx,cx);
+      rg.addColorStop(0,'#fdfdfb'); rg.addColorStop(1,'#eceae6');
+      g.fillStyle = rg;
+      g.beginPath(); g.arc(cx,cx,cx,0,Math.PI*2); g.fill();
+      g.strokeStyle = '#1c1c1e';
+      for (let i = 0; i < 60; i++){
+        const a = (i/60)*Math.PI*2;
+        const long = i % 5 === 0;
+        g.lineWidth = long ? 5 : 2.5;
+        const r1 = cx*0.955, r2 = cx*(long ? 0.90 : 0.925);
+        g.beginPath();
+        g.moveTo(cx+Math.cos(a)*r1, cx+Math.sin(a)*r1);
+        g.lineTo(cx+Math.cos(a)*r2, cx+Math.sin(a)*r2);
+        g.stroke();
+      }
+      g.fillStyle = '#000000'; g.textAlign = 'center';
+      g.font = '800 40px Georgia, serif';
+      g.fillText('SONOUXCODER', cx, cx*0.62);
+      g.font = '700 27px Georgia, serif';
+      g.fillText('FRONTEND UX·UI', cx, cx*1.48);
+      const dw = 120, dh = 90, dx = cx + cx*0.62 - dw/2, dy = cx - dh/2;
+      g.fillStyle = '#ffffff'; g.strokeStyle = '#9a9a9e'; g.lineWidth = 4;
+      g.fillRect(dx,dy,dw,dh); g.strokeRect(dx,dy,dw,dh);
+      g.fillStyle = '#000'; g.font = '800 68px Georgia, serif';
+      g.fillText(String(new Date().getDate()), dx+dw/2, dy+dh/2+22);
       const t = new THREE.CanvasTexture(c);
-      t.encoding = THREE.sRGBEncoding;                 // UV do modelo é padrão: flipY fica no default
-      t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+      t.anisotropy = 8;
       return t;
     }
 
-    /* O modelo vem em unidades de 3ds Max (uns 10 mil de largura), então o
-       encaixe é medido pela própria caixa envolvente em vez de por um número
-       fixo — troque o arquivo e ele continua enquadrado. */
-    function poeModelo(obj){
-      const caixa = new THREE.Box3().setFromObject(obj);
-      const tam = caixa.getSize(new THREE.Vector3());
-      const centro = caixa.getCenter(new THREE.Vector3());
-      const k = 4.9 / Math.max(tam.y, tam.x / 1.7);
-      obj.scale.setScalar(k);
-      obj.position.copy(centro).multiplyScalar(-k);
+    const dial = new THREE.Mesh(
+      new THREE.CircleGeometry(R*0.96, 64),
+      new THREE.MeshStandardMaterial({ map:dialTexture(), roughness:0.6, metalness:0.05 })
+    );
+    dial.position.z = 0.4; watch.add(dial);
 
-      obj.traverse(o => {
-        if (!o.isMesh) return;
-        const mats = Array.isArray(o.material) ? o.material : [o.material];
-        mats.forEach(m => {
-          if (!m) return;
-          if (m.map || /螢幕/.test(m.name || '')){
-            // a tela acende sozinha: sem emissive ela ficaria dependendo da luz
-            m.map = telaTextura();
-            m.emissiveMap = m.map;
-            m.emissive = new THREE.Color(0xffffff);
-            m.emissiveIntensity = 1;
-            m.roughness = .32; m.metalness = 0;
-          } else {
-            m.metalness = m.metalness > .5 ? .9 : .15;
-            m.roughness = .45;
-          }
-          m.needsUpdate = true;
-        });
-      });
-      watch.add(obj);
-      stage.classList.add('pronto');
+    for (let i = 0; i < 12; i++){
+      if (i === 3) continue;
+      const a = Math.PI/2 - (i/12)*Math.PI*2;
+      const len = i === 0 ? 0.42 : 0.34;
+      const idx = new THREE.Mesh(new THREE.BoxGeometry(0.09, len, 0.05), steelDark);
+      const r = R*0.78;
+      idx.position.set(Math.cos(a)*r, Math.sin(a)*r, 0.44);
+      idx.rotation.z = a - Math.PI/2;
+      watch.add(idx);
+      if (i === 0){
+        const idx2 = idx.clone();
+        idx.position.x -= 0.08; idx2.position.x += 0.08;
+        watch.add(idx2);
+      }
     }
 
-    new THREE.FBXLoader().load('assets/pc/computer.fbx', poeModelo, undefined, () => {
-      const dica = stage.querySelector('.lab-hint');
-      if (dica) dica.textContent = '3D indisponível';
-    });
+    function hand(w, l, mat){
+      const g = new THREE.Group();
+      const m = new THREE.Mesh(new THREE.BoxGeometry(w, l, 0.04), mat);
+      m.position.y = l/2 - 0.1;
+      g.add(m);
+      return g;
+    }
+    const hourHand = hand(0.11, R*0.55, steelDark);
+    const minHand  = hand(0.08, R*0.85, steelDark);
+    const secHand  = hand(0.025, R*0.92, steel);
+    hourHand.position.z = 0.48; minHand.position.z = 0.52; secHand.position.z = 0.56;
+    watch.add(hourHand, minHand, secHand);
+
+    const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.1, 24), steel);
+    pin.rotation.x = Math.PI/2; pin.position.z = 0.58; watch.add(pin);
+
+    // vidro: lente plana e discreta (o domo esférico virava um "sino" escuro em certos ângulos)
+    const glass = new THREE.Mesh(
+      new THREE.CircleGeometry(R*0.99, 64),
+      new THREE.MeshPhysicalMaterial({
+        color:0xffffff, transparent:true, opacity:0.05,
+        roughness:0.03, metalness:0, depthWrite:false
+      })
+    );
+    glass.position.z = 0.6;
+    glass.renderOrder = 10;
+    watch.add(glass);
+
+    (function crown(){
+      const g = new THREE.Group();
+      const body = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.28, 24), steel);
+      body.rotation.z = Math.PI/2; g.add(body);
+      for (let i = 0; i < 16; i++){
+        const a = (i/16)*Math.PI*2;
+        const ridge = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.045, 0.045), steelDark);
+        ridge.position.set(0, Math.cos(a)*0.22, Math.sin(a)*0.22);
+        ridge.rotation.x = -a;
+        g.add(ridge);
+      }
+      g.position.set(R*1.28, 0, 0);
+      watch.add(g);
+    })();
+
+    function bracelet(dir){
+      const g = new THREE.Group();
+      const rows = [
+        { x:-0.62, w:0.36, mat:steelBrushed },
+        { x:-0.24, w:0.30, mat:steel },
+        { x:0,     w:0.30, mat:steel },
+        { x:0.24,  w:0.30, mat:steel },
+        { x:0.62,  w:0.36, mat:steelBrushed }
+      ];
+      const N = 9;
+      for (let i = 0; i < N; i++){
+        const t = i/(N-1);
+        const y = dir*(R*1.05 + i*0.42);
+        const z = -Math.pow(t, 1.8)*2.4;
+        const tilt = dir*Math.pow(t, 1.4)*1.15;
+        rows.forEach((row, ri) => {
+          const inner = ri > 0 && ri < 4;
+          const link = new THREE.Mesh(
+            new THREE.BoxGeometry(row.w, 0.36, 0.22 + (inner ? 0.06 : 0)),
+            row.mat
+          );
+          link.position.set(row.x, y + (inner && i % 2 ? dir*0.19 : 0), z);
+          link.rotation.x = tilt;
+          link.scale.set(0.94, 0.9, 1);
+          g.add(link);
+        });
+      }
+      return g;
+    }
+    watch.add(bracelet(1), bracelet(-1));
+    watch.rotation.x = -0.15;
 
     // interação (restrita ao palco; pan-y deixa a página rolar no touch)
     let dragging = false, px = 0, py = 0;
@@ -2484,6 +2480,13 @@ document.getElementById('copyMail').addEventListener('click', async e => {
       watch.rotation.x += (targetRotX - watch.rotation.x) * 6 * dt;
       watch.position.y = reduced ? 0 : Math.sin(clock.elapsedTime * 0.9) * 0.08;
 
+      const now = new Date();
+      const s = now.getSeconds() + now.getMilliseconds()/1000;
+      const m = now.getMinutes() + s/60;
+      const h = (now.getHours() % 12) + m/60;
+      secHand.rotation.z  = -s/60 * Math.PI * 2;
+      minHand.rotation.z  = -m/60 * Math.PI * 2;
+      hourHand.rotation.z = -h/12 * Math.PI * 2;
 
       renderer.render(scene, camera);
     }
