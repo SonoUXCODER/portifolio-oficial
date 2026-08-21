@@ -463,24 +463,36 @@ nav.scrolled{border-bottom-color:var(--line);background:rgba(7,7,7,.82)}
 .tile .label{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--mut);letter-spacing:.08em}
 
 /* ---------- project cards ---------- */
-.proj-grid{grid-template-columns:repeat(auto-fit,minmax(298px,1fr));gap:18px}
+/* Grade editorial de 12 colunas: os cartões não têm todos a mesma largura,
+   eles alternam 7 e 5 colunas. É esse descompasso que faz a lista parecer
+   diagramada em vez de tabelada — e como 7+5 fecha 12, cada par ocupa uma
+   faixa inteira sem sobra. */
+.proj-grid{
+  grid-template-columns:repeat(12,1fr);
+  gap:9vh 1.39vw;
+  align-items:start;
+}
+.proj:nth-child(4n+1),.proj:nth-child(4n+4){grid-column:span 7}
+.proj:nth-child(4n+2),.proj:nth-child(4n+3){grid-column:span 5}
+
+/* Sem moldura: aqui o projeto é a imagem e o texto embaixo, não um cartão.
+   A borda e o fundo antigos brigariam com o corte de entrada da capa. */
 .proj{
-  border-radius:20px;overflow:hidden;
-  background:rgba(255,255,255,.045);border:1px solid var(--line);
-  display:flex;flex-direction:column;
-  will-change:transform;
-  transition:border-color .35s, box-shadow .35s, transform .25s cubic-bezier(.22,1,.36,1);
+  border:0;background:none;border-radius:0;overflow:visible;
+  display:flex;flex-direction:column;gap:1.67vw;
+  transition:none;
 }
-.proj:hover,.proj:focus-within{
-  border-color:var(--accent);
-  box-shadow:0 34px 80px rgba(0,0,0,.65), 0 0 0 1px var(--accent-soft);
-}
+.proj:hover,.proj:focus-within{border-color:transparent;box-shadow:none}
+/* O .rv continua na marcação porque é ele que o observador enxerga para
+   pendurar o .in — mas quem anima agora são as camadas de dentro, então o
+   fade do cartão inteiro sai da frente. */
+.proj.rv{opacity:1;transform:none;transition:none}
 /* a moldura recorta tudo: capa, scroll longo e brilho */
 /* a capa é um botão: abre a prévia embutida, sem tirar ninguém do portfólio */
 .proj-media{
   display:block;position:relative;overflow:hidden;width:100%;
-  aspect-ratio:16/10;background:#0c0c0c;
-  border:0;border-bottom:1px solid var(--line);
+  height:clamp(360px,54vh,640px);background:#0c0c0c;
+  border:0;
   padding:0;margin:0;font:inherit;color:inherit;text-align:left;
   cursor:pointer;-webkit-appearance:none;appearance:none;
 }
@@ -488,13 +500,15 @@ nav.scrolled{border-bottom-color:var(--line);background:rgba(7,7,7,.82)}
    deslocamento entre -8% e 0% continua cobrindo a área visível.
    --par  vem do scroll (-2% a -6%), --parh vem do mouse (-1.5% a +1.5%) */
 .proj-plate{
-  position:absolute;left:0;top:0;width:100%;
+  position:absolute;left:0;top:0;width:100%;height:100%;
   transform:translate3d(0,calc(var(--par,-4%) + var(--parh,0%)),0) scale(1.08);
   transform-origin:top center;
   will-change:transform;
   transition:transform .25s cubic-bezier(.22,1,.36,1);
 }
-.proj-cover{display:block;width:100%;height:auto;transition:opacity .45s ease}
+/* a moldura agora é alta e fixa, então a capa preenche em vez de escalar
+   pela largura — ancorada no topo, que é onde mora o cabeçalho do site */
+.proj-cover{display:block;width:100%;height:100%;object-fit:cover;object-position:top center;transition:opacity .45s ease}
 .proj-scroll{
   position:absolute;left:0;top:0;width:100%;height:auto;display:block;
   opacity:0;transform:translate3d(0,0,0);
@@ -517,7 +531,40 @@ nav.scrolled{border-bottom-color:var(--line);background:rgba(7,7,7,.82)}
   opacity:0;transition:opacity .4s;
 }
 .proj:hover .proj-glare{opacity:1}
-.proj-body{padding:24px 26px 26px;display:flex;flex-direction:column;flex:1}
+/* Bloco de info: um quadradinho vazado à esquerda e a coluna de texto à
+   direita. O quadrado é pseudo-elemento porque é puro ornamento — não faz
+   sentido existir na marcação nem ser lido em voz alta. */
+.proj-body{
+  padding:0;display:grid;grid-template-columns:auto 1fr;column-gap:.73vw;
+}
+.proj-body::before{
+  content:"";grid-column:1;grid-row:1/-1;
+  width:.55vw;height:.55vw;min-width:7px;min-height:7px;
+  margin:1.5vh .4vw 0 0;
+  border:1px solid #303030;
+}
+.proj-body > *{grid-column:2}
+
+/* ---------- a transição: cada palavra sobe de dentro de uma máscara ----------
+   O truque é ter dois elementos por palavra. O de fora tem overflow:hidden e
+   é do tamanho exato da palavra; o de dentro começa deslocado 105% para baixo,
+   ou seja, fora do recorte. Quando ele volta a zero a palavra parece emergir
+   de trás de uma linha invisível, em vez de simplesmente aparecer.
+   O --w de cada palavra vira o atraso, então elas sobem em cascata. */
+.palavra{display:inline-block;overflow:hidden;vertical-align:bottom}
+.palavra > span{
+  display:inline-block;
+  transform:translateY(105%);opacity:0;
+  transition:transform .95s cubic-bezier(.22,1,.36,1), opacity .95s cubic-bezier(.22,1,.36,1);
+  /* o min() é um teto: sem ele, uma descrição de 39 palavras faria a última
+     começar a subir dois segundos depois da primeira */
+  transition-delay:calc(min(var(--w,0), 24) * 26ms);
+}
+.proj.in .palavra > span{transform:none;opacity:1}
+@media (prefers-reduced-motion:reduce){
+  .palavra{overflow:visible}
+  .palavra > span{transform:none;opacity:1;transition:none}
+}
 .proj-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .proj .num{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent-ink);letter-spacing:.2em}
 .proj-flag{
@@ -525,11 +572,111 @@ nav.scrolled{border-bottom-color:var(--line);background:rgba(7,7,7,.82)}
   /* texto escuro sobre o roxo claro: em 9px o branco sobre --accent não tem contraste */
   color:#0b0b0b;background:var(--accent-ink);padding:4px 10px;border-radius:99px;
 }
-.proj h3{font-size:21px;font-weight:800;margin:12px 0 8px;text-transform:uppercase;font-variation-settings:"wdth" 80}
+.proj h3{
+  font-size:clamp(19px,1.67vw,32px);line-height:1.16;
+  font-weight:500;font-variation-settings:"wdth" 100;
+  letter-spacing:-.01em;text-transform:none;margin:0;
+}
 .proj h3 a{color:inherit;text-decoration:none}
 .proj h3 a:hover{text-decoration:underline;text-underline-offset:4px}
-.proj p{color:var(--mut);font-size:13px;line-height:1.7;flex:1}
+/* a descrição em caixa alta e corpo pequeno: vira textura ao lado do título,
+   não um parágrafo para ler de cabo a rabo */
+.proj p{
+  color:var(--mut);margin:1.1vh 0 0;
+  font-size:clamp(10.5px,.83vw,14px);line-height:1.6;
+  text-transform:uppercase;letter-spacing:.03em;
+}
 .proj .stack{margin-top:18px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#777;letter-spacing:.1em}
+
+/* ---------- vitrine: a entrada e o hover dos cartões ----------
+   Quatro camadas que entram em tempos diferentes, e é o descompasso entre elas
+   que dá a sensação de profundidade:
+     1. a capa é revelada por um corte que sobe (clip-path), não por fade;
+     2. as etiquetas sobem desfocando ao entrar, escalonadas uma a uma;
+     3. o selo no canto da capa e o link só respondem ao ponteiro;
+     4. o cursor ganha um rótulo ao lado, dizendo o que o clique faz.
+   Tudo pendurado em .proj.in, a mesma classe que o observador já usava. */
+
+/* 1) a capa entra cortada de baixo para cima */
+.proj-media{
+  clip-path:inset(100% 0 0 0);
+  transform:translateY(7%);
+  transition:clip-path .95s cubic-bezier(.22,1,.36,1), transform .95s cubic-bezier(.22,1,.36,1);
+}
+.proj.in .proj-media{clip-path:inset(0 0 0 0);transform:none}
+
+/* 2) selo no canto da capa: só no ponteiro, com o fundo borrado por trás */
+.proj-selo{
+  position:absolute;left:14px;top:14px;z-index:3;
+  display:flex;align-items:center;gap:8px;
+  padding:9px 12px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(0,0,0,.28);
+  -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+  font-family:'IBM Plex Mono',monospace;font-size:10px;
+  letter-spacing:.26em;text-transform:uppercase;color:#fff;
+  opacity:0;transform:translate3d(0,12px,0) rotate(-2deg);
+  transition:opacity .52s cubic-bezier(.22,1,.36,1), transform .52s cubic-bezier(.22,1,.36,1);
+  pointer-events:none;
+}
+.proj:hover .proj-selo,.proj:focus-within .proj-selo{opacity:1;transform:translate3d(0,0,0) rotate(-2deg)}
+
+/* 3) etiquetas: sobem desfocadas quando o cartão entra, acendem no ponteiro.
+      O --t de cada uma vira o atraso, então elas chegam em fila. */
+.proj-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:18px}
+.proj-tag{
+  padding:6px 9px;
+  border:1px solid rgba(255,255,255,.06);
+  background:rgba(0,0,0,.25);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  font-family:'IBM Plex Mono',monospace;font-size:10px;
+  letter-spacing:.12em;text-transform:uppercase;color:#8a8a8a;
+  opacity:0;transform:translateY(11px) rotate(-2deg);filter:blur(4px);
+  transition:opacity .5s cubic-bezier(.22,1,.36,1), transform .5s cubic-bezier(.22,1,.36,1),
+             filter .5s, border-color .35s, background .35s, color .35s;
+  transition-delay:calc(var(--t,0) * 55ms);
+}
+.proj.in .proj-tag{opacity:1;transform:translateY(0) rotate(-2deg);filter:none}
+.proj:hover .proj-tag,.proj:focus-within .proj-tag{
+  border-color:rgba(255,255,255,.16);background:rgba(0,0,0,.4);color:var(--accent-ink);
+}
+
+/* 4) o link, com o traço que estica no ponteiro */
+.proj-ver{
+  margin-top:16px;display:inline-flex;align-items:center;gap:9px;
+  font-family:'IBM Plex Mono',monospace;font-size:10px;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--accent-ink);
+  opacity:0;transform:translateY(10px);filter:blur(4px);
+  transition:opacity .55s cubic-bezier(.22,1,.36,1) .18s,
+             transform .55s cubic-bezier(.22,1,.36,1) .18s,
+             filter .55s .18s, color .35s;
+}
+.proj.in .proj-ver{opacity:.6;transform:none;filter:none}
+.proj:hover .proj-ver,.proj:focus-within .proj-ver{opacity:1;color:#fff}
+.proj-ver i{display:block;width:16px;height:1px;background:currentColor;transition:width .4s cubic-bezier(.22,1,.36,1)}
+.proj:hover .proj-ver i,.proj:focus-within .proj-ver i{width:30px}
+
+@media (prefers-reduced-motion:reduce){
+  .proj-media{clip-path:none;transform:none}
+  .proj-tag,.proj-ver{opacity:1;transform:none;filter:none;transition:none}
+}
+
+/* A alternância 7/5 só faz sentido enquanto cabem dois projetos lado a lado.
+   Abaixo disso cada um ocupa a faixa inteira e a lista vira uma coluna só. */
+@media(max-width:1100px){
+  .proj-grid{gap:6.5vh 0}
+  .proj:nth-child(n){grid-column:span 12}
+  .proj{gap:18px}
+  .proj-media{height:clamp(300px,44vh,460px)}
+}
+@media(max-width:640px){
+  .proj-media{height:clamp(240px,36vh,360px)}
+  .proj-body{column-gap:10px}
+  .proj-body::before{margin-top:9px}
+  .proj h3{font-size:clamp(18px,5.6vw,26px)}
+  .proj p{font-size:11.5px;line-height:1.62}
+  .proj-selo{left:10px;top:10px;padding:7px 10px;letter-spacing:.2em}
+}
 
 /* ---------- final ---------- */
 #end{flex-direction:column;gap:0;text-align:center;padding:100px 24px 0}
@@ -869,6 +1016,21 @@ footer a:hover{color:#fff}
 }
 .cursor.lupa .cursor-mira{opacity:0;transform:scale(.4)}
 .cursor.lupa .cursor-lupa{width:26px;height:26px;opacity:1}
+/* O rótulo ao lado da lente: a lente já diz "dá para ampliar", mas não diz o
+   que o clique faz. Ele mora fora do círculo, por isso é absoluto e ancorado
+   em 100% da largura — a lente cresce de 26 para 78px e ele acompanha sozinho. */
+.cursor-rotulo{
+  position:absolute;left:calc(100% + 10px);top:50%;
+  transform:translateY(-50%) scale(.55);transform-origin:left center;
+  padding:9px 11px;
+  background:#efecff;color:#0a0a0a;
+  font-family:'IBM Plex Mono',monospace;font-size:10px;
+  letter-spacing:.16em;text-transform:uppercase;white-space:nowrap;
+  opacity:0;pointer-events:none;
+  box-shadow:0 10px 30px rgba(0,0,0,.45);
+  transition:opacity .26s, transform .34s cubic-bezier(.22,1,.36,1);
+}
+.cursor.lupa .cursor-rotulo{opacity:1;transform:translateY(-50%) scale(1)}
 @media (pointer:fine){
   html.cursor-proprio,
   html.cursor-proprio body,
@@ -1345,6 +1507,7 @@ body.viewer-aberto{overflow:hidden}
   <svg class="cursor-lupa" viewBox="0 0 24 24">
     <circle cx="10.5" cy="10.5" r="6.6"></circle><path d="M15.4 15.4 20.6 20.6"></path>
   </svg>
+  <span class="cursor-rotulo" id="cursorRotulo" data-i="proj_selo">Ansehen →</span>
 </div>
 
 <!-- ============ visualizador embutido dos projetos ============ -->
@@ -1400,6 +1563,7 @@ const I18N = {
     manifesto:"Jedes Projekt auf dieser Seite ist online und von Hand gebaut. Ich fange beim Inhalt an, nicht beim Layout, und höre erst auf, wenn die Seite auf dem Handy genauso schnell ist wie auf dem Rechner.",
     hero_lead:"Ich baue Seiten, die schnell laden, premium aussehen und aus Besuchern Kunden machen.",
     cena_palavra:"PREMIUM",
+    proj_selo:"Ansehen →", proj_ver:"Projekt ansehen",
     cena_f1a:"SCH", cena_f1b:"NELL", cena_f2a:"VON", cena_f2b:"HAND", cena_f3a:"MEHR", cena_f3b:"SPRACHIG",
     fato1:"Jedes Projekt hier ist von Hand geschrieben, ohne Baukasten und ohne fertiges Theme.",
     fato2:"Mehrsprachig ab der ersten Zeile, nicht als Übersetzung obendrauf.",
@@ -1430,6 +1594,7 @@ const I18N = {
     manifesto:"Every project on this page is live and built by hand. I start from the content, not the layout, and I am not done until the page is as fast on a phone as it is on a desktop.",
     hero_lead:"I build sites that load fast, look premium, and turn visitors into clients.",
     cena_palavra:"PREMIUM",
+    proj_selo:"View →", proj_ver:"View project",
     cena_f1a:"FAST", cena_f1b:"LOAD", cena_f2a:"HAND", cena_f2b:"MADE", cena_f3a:"MULTI", cena_f3b:"LINGUAL",
     fato1:"Every project here is written by hand, with no site builder and no bought theme.",
     fato2:"Multilingual from the first line, not a translation pasted on later.",
@@ -1460,6 +1625,7 @@ const I18N = {
     manifesto:"Todo projeto desta página está no ar e foi feito à mão. Começo pelo conteúdo, não pelo layout, e só termino quando a página está tão rápida no celular quanto no computador.",
     hero_lead:"Construo sites que carregam rápido, são premium e transformam visitantes em clientes.",
     cena_palavra:"PREMIUM",
+    proj_selo:"Ver →", proj_ver:"Ver projeto",
     cena_f1a:"RÁ", cena_f1b:"PIDO", cena_f2a:"NA", cena_f2b:"MÃO", cena_f3a:"MULTI", cena_f3b:"LÍNGUE",
     fato1:"Cada projeto aqui foi escrito à mão, sem construtor e sem tema pronto.",
     fato2:"Multilíngue desde a primeira linha, não como tradução colada depois.",
@@ -1471,7 +1637,7 @@ let lang = 'de';
 // Preenchidos mais abaixo, quando o letreiro e o visualizador são montados.
 // Precisam ser declarados ACIMA de setLang: initLang chama setLang logo em
 // seguida, e um let declarado depois estaria em zona morta temporal.
-let remontaLetreiro = null, traduzVisualizador = null, remontaRevelacao = null, remontaCena = null;
+let remontaLetreiro = null, traduzVisualizador = null, remontaRevelacao = null, remontaCena = null, remontaVitrine = null;
 
 function setLang(l, persist = true){
   lang = I18N[l] ? l : 'de';
@@ -1487,6 +1653,7 @@ function setLang(l, persist = true){
   if (traduzVisualizador) traduzVisualizador();
   if (remontaRevelacao) remontaRevelacao();   // setLang reescreveu o texto e apagou os spans
   if (remontaCena) remontaCena();             // a palavra do canvas mudou de idioma
+  if (remontaVitrine) remontaVitrine();       // idem: o setLang apagou as palavras dos cartões
   if (persist) { try { localStorage.setItem('sux-lang', lang); } catch {} }
 }
 langButtons.forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
@@ -1925,6 +2092,86 @@ const cena = (function(){
 })();
 atualizaCena = cena.update;
 cena.update();
+
+/* ============ vitrine: monta selo, etiquetas e link em cada cartão ============
+   Estas três peças são iguais nos quatro cartões, então em vez de repetir o
+   mesmo bloco quatro vezes no HTML elas nascem aqui. A lista de tecnologias
+   já existia como uma linha de texto separada por vírgula (.stack); ela vira
+   uma etiqueta por item, e o índice de cada uma vira o atraso da entrada.
+   Tudo recebe data-i, então o setLang traduz junto com o resto da página. */
+(function(){
+  const cartoes = [...document.querySelectorAll('.proj')];
+  if (!cartoes.length) return;
+  const diz = (chave, reserva) => (I18N[lang] && I18N[lang][chave]) || reserva;
+
+  /* Parte o texto em palavras mascaradas. A contagem de atraso não zera a
+     cada elemento: ela é passada adiante, então o título e a descrição de um
+     mesmo cartão sobem como uma cascata só, e não como dois blocos. */
+  function parte(el, inicio){
+    if (!el) return inicio;
+    const texto = el.textContent.trim();
+    if (!texto) return inicio;
+    el.textContent = '';
+    texto.split(/\s+/).forEach((palavra, i) => {
+      const fora = document.createElement('span');
+      fora.className = 'palavra';
+      const dentro = document.createElement('span');
+      dentro.style.setProperty('--w', inicio + i);
+      dentro.textContent = palavra;
+      fora.appendChild(dentro);
+      el.append(fora, document.createTextNode(' '));
+    });
+    return inicio + texto.split(/\s+/).length;
+  }
+
+  // setLang reescreve o textContent e apaga as palavras: remontar de novo
+  remontaVitrine = function(){
+    for (const cartao of cartoes){
+      let n = parte(cartao.querySelector('h3'), 0);
+      parte(cartao.querySelector('p'), n);
+    }
+  };
+
+  for (const cartao of cartoes){
+    const capa = cartao.querySelector('.proj-media');
+    const pilha = cartao.querySelector('.stack');
+
+    // o selo mora dentro da capa, para o recorte da entrada levar ele junto
+    if (capa && !capa.querySelector('.proj-selo')){
+      const selo = document.createElement('span');
+      selo.className = 'proj-selo';
+      selo.dataset.i = 'proj_selo';
+      selo.textContent = diz('proj_selo', 'Ansehen →');
+      capa.appendChild(selo);
+    }
+
+    if (!pilha || pilha.dataset.pronto) continue;
+    const itens = pilha.textContent.split(',').map(s => s.trim()).filter(Boolean);
+    pilha.textContent = '';
+    pilha.className = 'proj-tags';
+    pilha.dataset.pronto = '1';
+    itens.forEach((texto, i) => {
+      const tag = document.createElement('span');
+      tag.className = 'proj-tag';
+      tag.style.setProperty('--t', i);      // vira o atraso, em degraus de 55ms
+      tag.textContent = texto;
+      pilha.appendChild(tag);
+    });
+
+    // o link não é <a>: quem abre a prévia é o botão da capa, e um segundo
+    // alvo focável apontando para o mesmo lugar só atrapalharia o teclado
+    const ver = document.createElement('span');
+    ver.className = 'proj-ver';
+    ver.setAttribute('aria-hidden', 'true');
+    const rotulo = document.createElement('span');
+    rotulo.dataset.i = 'proj_ver';
+    rotulo.textContent = diz('proj_ver', 'Projekt ansehen');
+    ver.append(rotulo, document.createElement('i'));
+    pilha.after(ver);
+  }
+
+  remontaVitrine();
+})();
 
 /* ============ cursor próprio, com lupa sobre as capas ============ */
 (function(){
