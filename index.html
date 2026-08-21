@@ -875,6 +875,124 @@ footer a:hover{color:#fff}
   .cena-fantasma--baixo{width:96vw;transform:translate(-50%,160%)}
 }
 
+/* ---------- baralho: as capas que se separam ----------
+   As medidas das cartas e os ângulos das laterais são os mesmos da cena que
+   serviu de referência; o que muda é que aqui não há biblioteca de animação.
+   Cada carta fica ancorada no centro do pin e recebe UM transform só,
+   montado no JS: translate + rotate + scale. Interpolar um transform é
+   barato e não dispara layout, então as quatro voam sem engasgo. */
+#deck{
+  position:relative;z-index:3;
+  background:var(--bg);
+  border-top:1px solid var(--line);
+  box-shadow:0 -40px 120px rgba(0,0,0,.9);
+  border-radius:26px 26px 0 0;
+  margin-top:-14vh;
+  min-height:330vh;
+}
+.deck-pin{
+  position:sticky;top:0;
+  height:100vh;height:100svh;
+  overflow:hidden;
+  background:var(--bg);
+  isolation:isolate;
+}
+.deck-fundo{position:absolute;inset:0;z-index:0;overflow:hidden}
+.deck-fundo::after{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 46%,var(--accent-glow),transparent 58%);
+  opacity:.34;
+}
+.deck-fantasma{
+  position:absolute;left:50%;top:50%;
+  display:flex;justify-content:space-between;
+  font-weight:900;font-variation-settings:"wdth" 70;
+  font-size:min(100px,10vh);line-height:1;
+  letter-spacing:-.055em;text-transform:uppercase;
+  color:rgba(255,255,255,.075);
+  white-space:nowrap;
+  opacity:0;transition:opacity .6s ease;
+}
+.deck-fantasma--cima {transform:translate(-50%,-225%);width:min(1000px,100vh)}
+.deck-fantasma--meio {transform:translate(-51%,-50%); width:min(1020px,102vh)}
+.deck-fantasma--baixo{transform:translate(-50%,140%); width:min(1222px,122.2vh)}
+.deck-pin.acesa .deck-fantasma{opacity:1}
+
+/* a mesa é só o referencial: as cartas se posicionam pelo centro dela */
+.deck-mesa{position:absolute;inset:0;z-index:4}
+.deck-carta{
+  position:absolute;left:50%;top:50%;
+  padding:0;border:0;background:#0c0c0c;
+  border-radius:16px;overflow:hidden;
+  cursor:pointer;color:inherit;font:inherit;
+  box-shadow:0 40px 90px rgba(0,0,0,.6);
+  transform-origin:50% 50%;
+  will-change:transform,opacity;
+  /* o JS escreve o transform; sem ele a carta já nasce centrada */
+  transform:translate(-50%,-50%);
+}
+.deck-carta img{display:block;width:100%;height:100%;object-fit:cover;object-position:top center}
+.deck-carta-nome{
+  position:absolute;left:0;right:0;bottom:0;z-index:2;
+  padding:14px 14px 12px;text-align:left;
+  font-family:'IBM Plex Mono',monospace;font-size:10px;
+  letter-spacing:.18em;text-transform:uppercase;color:#fff;
+  background:linear-gradient(transparent,rgba(0,0,0,.82));
+  opacity:0;transition:opacity .4s;
+}
+.deck-carta:hover .deck-carta-nome,.deck-carta:focus-visible .deck-carta-nome{opacity:1}
+.deck-carta--front,.deck-carta--back{width:min(470px,47vh);height:min(600px,60vh)}
+.deck-carta--left,.deck-carta--right{width:min(345px,34.5vh);height:min(377px,37.7vh)}
+.deck-carta--front{z-index:4}
+.deck-carta--back {z-index:3}
+.deck-carta--left,.deck-carta--right{z-index:6}
+
+.deck-titulo{
+  position:absolute;left:50%;top:50%;z-index:20;
+  transform:translate(-50%,-50%);
+  margin:0;width:100%;text-align:center;
+  font-size:clamp(72px,10vw,160px);line-height:1;
+  font-weight:900;font-variation-settings:"wdth" 74;
+  letter-spacing:-.055em;text-transform:uppercase;color:#f7f4ef;
+  overflow:hidden;pointer-events:none;
+}
+.deck-titulo span{display:inline-block;will-change:transform,opacity}
+
+.deck-cta{
+  position:absolute;left:50%;bottom:clamp(38px,7vh,88px);z-index:21;
+  transform:translateX(-50%) translateY(14px);
+  display:inline-flex;align-items:center;gap:12px;
+  padding:14px 22px;border:1px solid var(--line);border-radius:999px;
+  background:rgba(255,255,255,.04);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  font-family:'IBM Plex Mono',monospace;font-size:11px;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--ink);
+  text-decoration:none;opacity:0;pointer-events:none;
+  transition:opacity .6s cubic-bezier(.22,1,.36,1), transform .6s cubic-bezier(.22,1,.36,1),
+             border-color .3s, background .3s;
+}
+.deck-pin.chamada .deck-cta{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
+.deck-cta:hover{border-color:var(--accent);background:var(--accent-soft)}
+.deck-cta i{display:block;width:18px;height:1px;background:currentColor;transition:width .35s cubic-bezier(.22,1,.36,1)}
+.deck-cta:hover i{width:30px}
+
+@media (prefers-reduced-motion:reduce){
+  #deck{min-height:0;margin-top:0;border-radius:0}
+  .deck-pin{position:relative;height:auto;padding:12vh 24px;display:grid;place-items:center;gap:26px}
+  .deck-mesa{position:relative;inset:auto;display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
+  .deck-carta{position:relative;left:auto;top:auto;transform:none!important;width:180px;height:230px}
+  .deck-titulo{position:relative;left:auto;top:auto;transform:none;font-size:clamp(40px,9vw,90px)}
+  .deck-cta{position:relative;left:auto;bottom:auto;transform:none;opacity:1;pointer-events:auto}
+  .deck-fantasma{display:none}
+}
+@media(max-width:900px){
+  #deck{min-height:290vh}
+  .deck-fantasma{font-size:min(58px,7.4vh)}
+  .deck-carta--front,.deck-carta--back{width:min(300px,62vw);height:min(400px,46vh)}
+  .deck-carta--left,.deck-carta--right{width:min(220px,46vw);height:min(250px,29vh)}
+  .deck-titulo{font-size:clamp(46px,13vw,90px)}
+}
+
 /* abertura: uma frase só, entre o hero e o portfólio */
 #intro{
   position:relative;z-index:3;
@@ -1356,6 +1474,34 @@ body.viewer-aberto{overflow:hidden}
   </div>
 </section>
 
+<!-- ============ BARALHO: as capas empilhadas que se separam ============
+     Quatro capas nascem uma em cima da outra no meio da tela, com a palavra
+     PORTFOLIO por cima e três pares de palavras gigantes ao fundo. Rolando,
+     a palavra sai, o baralho se abre e cada capa voa para o seu canto — só
+     então aparece o botão que leva à lista de projetos.
+     A --back começa escondida atrás da --front de propósito: quando o
+     baralho abre, sai uma carta que ninguém sabia que estava ali. -->
+<section id="deck">
+  <div class="deck-pin">
+    <div class="deck-fundo" aria-hidden="true">
+      <div class="deck-fantasma deck-fantasma--cima"><span data-i="deck_f1a">HAND</span><span data-i="deck_f1b">ARBEIT</span></div>
+      <div class="deck-fantasma deck-fantasma--meio"><span data-i="deck_f2a">MEHR</span><span data-i="deck_f2b">SPRACHIG</span></div>
+      <div class="deck-fantasma deck-fantasma--baixo"><span data-i="deck_f3a">ERFAH</span><span data-i="deck_f3b">RUNG</span></div>
+    </div>
+
+    <div class="deck-mesa" id="deckMesa">
+      <button class="deck-carta deck-carta--back"  type="button" data-projeto="3"><img src="assets/projetos/fg-cover.webp"     alt="" loading="lazy" decoding="async"><span class="deck-carta-nome">Truffle N.B.</span></button>
+      <button class="deck-carta deck-carta--left"  type="button" data-projeto="1"><img src="assets/projetos/sandra-cover.webp" alt="" loading="lazy" decoding="async"><span class="deck-carta-nome">Sandra Hair Salon</span></button>
+      <button class="deck-carta deck-carta--right" type="button" data-projeto="2"><img src="assets/projetos/knifes-cover.webp" alt="" loading="lazy" decoding="async"><span class="deck-carta-nome">knifes.me</span></button>
+      <button class="deck-carta deck-carta--front" type="button" data-projeto="0"><img src="assets/projetos/thayse-cover.webp" alt="" loading="lazy" decoding="async"><span class="deck-carta-nome">Dra. Thayse Marques</span></button>
+    </div>
+
+    <h2 class="deck-titulo" aria-hidden="true"><span>PORTFOLIO</span></h2>
+
+    <a class="deck-cta" href="#work"><span data-i="deck_cta">Portfolio ansehen</span><i></i></a>
+  </div>
+</section>
+
 <!-- ================= SHOWCASE ================= -->
 <section class="panel" id="work">
   <div class="sec-head rv">
@@ -1564,6 +1710,7 @@ const I18N = {
     hero_lead:"Ich baue Seiten, die schnell laden, premium aussehen und aus Besuchern Kunden machen.",
     cena_palavra:"PREMIUM",
     proj_selo:"Ansehen →", proj_ver:"Projekt ansehen",
+    deck_cta:"Portfolio ansehen", deck_f1a:"HAND", deck_f1b:"ARBEIT", deck_f2a:"MEHR", deck_f2b:"SPRACHIG", deck_f3a:"ERFAH", deck_f3b:"RUNG",
     cena_f1a:"SCH", cena_f1b:"NELL", cena_f2a:"VON", cena_f2b:"HAND", cena_f3a:"MEHR", cena_f3b:"SPRACHIG",
     fato1:"Jedes Projekt hier ist von Hand geschrieben, ohne Baukasten und ohne fertiges Theme.",
     fato2:"Mehrsprachig ab der ersten Zeile, nicht als Übersetzung obendrauf.",
@@ -1595,6 +1742,7 @@ const I18N = {
     hero_lead:"I build sites that load fast, look premium, and turn visitors into clients.",
     cena_palavra:"PREMIUM",
     proj_selo:"View →", proj_ver:"View project",
+    deck_cta:"See the portfolio", deck_f1a:"HAND", deck_f1b:"MADE", deck_f2a:"MULTI", deck_f2b:"LINGUAL", deck_f3a:"EXPERI", deck_f3b:"ENCE",
     cena_f1a:"FAST", cena_f1b:"LOAD", cena_f2a:"HAND", cena_f2b:"MADE", cena_f3a:"MULTI", cena_f3b:"LINGUAL",
     fato1:"Every project here is written by hand, with no site builder and no bought theme.",
     fato2:"Multilingual from the first line, not a translation pasted on later.",
@@ -1626,6 +1774,7 @@ const I18N = {
     hero_lead:"Construo sites que carregam rápido, são premium e transformam visitantes em clientes.",
     cena_palavra:"PREMIUM",
     proj_selo:"Ver →", proj_ver:"Ver projeto",
+    deck_cta:"Ver o portfólio", deck_f1a:"FEITO", deck_f1b:"À MÃO", deck_f2a:"MULTI", deck_f2b:"LÍNGUE", deck_f3a:"EXPERI", deck_f3b:"ÊNCIA",
     cena_f1a:"RÁ", cena_f1b:"PIDO", cena_f2a:"NA", cena_f2b:"MÃO", cena_f3a:"MULTI", cena_f3b:"LÍNGUE",
     fato1:"Cada projeto aqui foi escrito à mão, sem construtor e sem tema pronto.",
     fato2:"Multilíngue desde a primeira linha, não como tradução colada depois.",
@@ -1686,7 +1835,7 @@ const secs = links.map(a => document.querySelector(a.getAttribute('href')));
 const plates = [...document.querySelectorAll('.proj-plate')];
 let scrollQueued = false, activeIdx = -1;
 // preenchido mais abaixo, quando o letreiro do eyebrow é montado
-let atualizaLetreiro = null, atualizaRevelacao = null, atualizaCena = null;
+let atualizaLetreiro = null, atualizaRevelacao = null, atualizaCena = null, atualizaBaralho = null;
 
 function onScroll(){
   scrollQueued = false;
@@ -1695,6 +1844,7 @@ function onScroll(){
   if (atualizaLetreiro) atualizaLetreiro(scrollY);
   if (atualizaRevelacao) atualizaRevelacao();
   if (atualizaCena) atualizaCena();
+  if (atualizaBaralho) atualizaBaralho();
 
   let idx = 0;
   secs.forEach((s,i) => { if (s && s.getBoundingClientRect().top <= innerHeight*0.5) idx = i; });
@@ -2092,6 +2242,108 @@ const cena = (function(){
 })();
 atualizaCena = cena.update;
 cena.update();
+
+/* ============ baralho: as capas empilhadas que se separam ============
+   Cada carta tem duas poses: empilhada e espalhada. Uma pose é só quatro
+   números — deslocamento x e y a partir do centro do pin (em fração do pin,
+   para acompanhar a tela), giro e escala. Rolando, a gente interpola de uma
+   pose para a outra e escreve um transform só por carta.
+   Interpolar transform não dispara layout, então as quatro voam lisas mesmo
+   com sombra e cantos arredondados. */
+const baralho = (function(){
+  const nada  = { update(){} };
+  const secao = document.getElementById('deck');
+  if (!secao || reduced) return nada;
+  const pin   = secao.querySelector('.deck-pin');
+  const mesa  = document.getElementById('deckMesa');
+  const titulo= secao.querySelector('.deck-titulo span');
+  if (!pin || !mesa || !titulo) return nada;
+
+  // dx e dy em fração do pin, giro em graus, escala, opacidade
+  const POSES = {
+    // As quatro poses finais ficam nos cantos de propósito: o miolo e o rodapé
+    // do meio precisam sobrar livres, porque é ali que entra o botão.
+    front:{ de:{dx: 0,    dy: 0,    giro: 0,     esc:1,   op:1},
+            para:{dx:-.32, dy:-.16, giro:-3,     esc:.50, op:1} },
+    back: { de:{dx: 0,    dy: 0,    giro: 0,     esc:1,   op:1},
+            para:{dx: .33, dy: .14, giro: 3.5,   esc:.52, op:1} },
+    left: { de:{dx:-.34,  dy:-.03,  giro:-5.875, esc:1,   op:.5},
+            para:{dx:-.28, dy: .24, giro:-6,     esc:.74, op:1} },
+    right:{ de:{dx: .34,  dy:-.03,  giro: 5.875, esc:1,   op:.5},
+            para:{dx: .27, dy:-.22, giro: 4,     esc:.78, op:1} }
+  };
+  const cartas = [...mesa.querySelectorAll('.deck-carta')].map(el => ({
+    el, pose: POSES[[...el.classList].find(c => c.startsWith('deck-carta--')).slice(12)]
+  })).filter(c => c.pose);
+  if (!cartas.length) return nada;
+
+  const faixa = (p,a,b) => Math.min(1, Math.max(0, (p - a) / (b - a)));
+  const entre = (a,b,t) => a + (b - a) * t;
+  const suave = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;   // inOutCubic
+  let ultimoP = -1;
+
+  function pinta(p){
+    const cx = pin.clientWidth, cy = pin.clientHeight;
+
+    // entrada: as cartas nascem menores e as laterais chegam de fora
+    const entra = faixa(p, 0, .16);
+    // abertura do baralho: é aqui que elas se separam
+    const abre  = suave(faixa(p, .34, .82));
+
+    for (const { el, pose } of cartas){
+      const a = pose.de, b = pose.para;
+      const dx = entre(a.dx, b.dx, abre) * cx;
+      const dy = entre(a.dy, b.dy, abre) * cy;
+      const giro = entre(a.giro, b.giro, abre);
+      // na entrada as laterais ainda vêm deslizando de fora para dentro
+      const desliza = (1 - entra) * (a.dx < 0 ? -.10 : a.dx > 0 ? .10 : 0) * cx;
+      const esc = entre(a.esc, b.esc, abre) * entre(.8, 1, entra);
+      const op  = entre(0, entre(a.op, b.op, abre), entra);
+      el.style.transform =
+        `translate(-50%,-50%) translate(${(dx + desliza).toFixed(1)}px, ${dy.toFixed(1)}px)` +
+        ` rotate(${giro.toFixed(2)}deg) scale(${esc.toFixed(3)})`;
+      el.style.opacity = op.toFixed(3);
+    }
+
+    // o título entra subindo, fica, e sai antes do baralho abrir
+    const sobe = faixa(p, .02, .16), some = faixa(p, .30, .44);
+    titulo.style.transform = `translateY(${((1 - sobe) * 100).toFixed(1)}%)`;
+    titulo.style.opacity = (sobe * (1 - some)).toFixed(3);
+
+    pin.classList.toggle('acesa', p > .14 && p < .92);
+    pin.classList.toggle('chamada', p > .80);
+  }
+
+  function update(){
+    const r = secao.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > innerHeight) return;
+    const curso = r.height - innerHeight;
+    const p = curso <= 0 ? 0 : Math.min(1, Math.max(0, -r.top / curso));
+    if (Math.abs(p - ultimoP) < .0004) return;      // nada mudou o bastante
+    ultimoP = p;
+    // Sem rAF aqui de propósito: quem chama isto é o onScroll, que já roda
+    // dentro de um. Agendar de novo só adicionaria um quadro de atraso — e,
+    // pior, um sinalizador que trava para sempre se o quadro não vier.
+    pinta(p);
+  }
+
+  // clicar numa carta abre a prévia do projeto correspondente, reaproveitando
+  // o visualizador que já existe — o botão da capa lá embaixo faz o mesmo
+  mesa.addEventListener('click', e => {
+    const carta = e.target.closest('.deck-carta');
+    if (!carta) return;
+    const i = +carta.dataset.projeto;
+    const alvo = document.querySelectorAll('.proj')[i];
+    const botao = alvo && alvo.querySelector('.proj-media');
+    if (botao) botao.click();
+  });
+
+  addEventListener('resize', () => { ultimoP = -1; update(); }, {passive:true});
+  pinta(0);
+  return { update };
+})();
+atualizaBaralho = baralho.update;
+baralho.update();
 
 /* ============ vitrine: monta selo, etiquetas e link em cada cartão ============
    Estas três peças são iguais nos quatro cartões, então em vez de repetir o
